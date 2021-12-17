@@ -71,211 +71,206 @@
         <h2 class="h2">1 Introduction</h2>
         <br>
         <p>
-          As the quantity and diversity of data continue to grow, user data is becoming spread across a variety of
-          third-party services catering to the needs of specific departments within a company (e.g., marketing, customer
-          service, finance). Unfortunately, this places data in silos, fragmenting what should be a more unified user
-          view.
+          Load tests are a critical tool for any company that wants to build and maintain robust, 
+          scalable websites and web apps. They simulate traffic hitting your servers, 
+          allowing you to measure exactly how your app performs under different load profiles.
         </p>
         <br>
         <p>
-          With the advent of the cloud-native data warehouse has come the ability to collect data from disparate sources
-          into one central repository and treat the warehouse as the “single source of truth”.
+          The overall concept of load testing was born in the physical world. 
+          For example, structural engineers load test bridges before opening them to the public and power engineers load test electrical distribution systems. 
         </p>
         <br>
         <p>
-          Data modeling and business intelligence or analytics tools built on top of the warehouse can now offer a
-          consistent view of users. However, mapping this data back into the same third-party tools to impact day-to-day
-          operations is still a huge challenge. In other words, there is a lag between insights and operations.
+          But in the world of software, load testing is the process of directing simulated traffic at any application that handles requests, 
+          be that a website, web app, API endpoint, even load balancers and caches, then measuring that software’s performance under the load.
         </p>
         <br />
-        <h3>1.1 What is Tapestry?</h3>
+        <h3>1.1 Who’s interested in load test results?</h3>
         <br />
         <p>
-          Tapestry is an open-source orchestration framework for the deployment of user entity data pipelines.
+          Load test results are valuable to both business stakeholders and engineering teams. 
         </p>
-        <figure>
-          <div data-w-id="c8b52af7-58af-18c7-65ce-aa2950b6601f" class="hero-images-container case-study-image"><img
-              src="assets/images/demo/30_kickstart_full.gif" alt="" class="hero-image-left"
-              style="will-change: transform; transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"><img
-              src="assets/images/demo/tap_ui_grouparoo_v2.png" alt="" class="hero-image-right">
-          </div>
-          <figcaption>Tapestry CLI and Dashboard</figcaption>
-        </figure>
         </br>
         <p>
-          Tapestry allows developers to easily configure and launch an end-to-end data pipeline hosted on Amazon Web
-          Services. With Tapestry, your user data pipeline will be automatically deployed and ready to ingest data from
-          all your sources, store and transform that data in a warehouse, and sync it back to your tools for immediate
-          use.
+          On the business side, when an app can’t cope with its current amount of traffic, the app’s performance degrades or the app may stop working entirely. 
+          This results in an immediate drop in the company’s revenue.
         </p>
         <br />
         <p>
-          To illustrate just exactly what Tapestry does, let’s use the example of a company named Rainshield.
-        </p>
-        <br />
-        <h3>1.2 Hypothetical</h3>
-        <figure>
-          <img src="assets/images/introduction/4_Rainshield_business.png" class="case-study-image">
-        </figure>
-        <br />
-        <p>
-          Rainshield is a company in the umbrella space, with a thriving e-commerce store that is quickly gaining
-          traction amongst a larger user base. This has attracted the interest of investors, and they’ve raised funding
-          that has allowed them to expand.
+          From the engineering team’s perspective, load testing provides valuable feedback about your production system - how many concurrent users can it handle? 
+          How does response time change as load increases? Is there an uptick in failed requests under heavier load?
         </p>
         <br />
         <p>
-          The small team that started Rainshield is no longer able to wear all hats. They are beginning to staff larger
-          departments, such as sales, marketing, and customer support, to manage the influx of new business they’re
-          experiencing.
+          It’s this engineering perspective that we’ll focus on in this case study of Monsoon.
         </p>
         <br />
-        <h3>1.3 SaaS Bloat</h3>
-        <figure>
-          <img src="assets/images/introduction/5_Rainshield_SaaS.png" class="case-study-image">
-        </figure>
+        <h3>1.2 What is Monsoon?</h3>
         <br />
         <p>
-          As the business evolves, Rainshield begins to utilize various SaaS tools to engage with their user base in new
-          ways and to meet the daily operational needs of different departments.
+          Monsoon is an open-source, serverless framework for running browser-based load tests in the cloud. 
         </p>
+        <br />
+        [TO INSERT: picture of Monsoon CLI and Weather Channel]
         <br />
         <p>
-          For example, they begin to use Stripe to handle all of their online transactions. The company’s sales team has
-          started using Salesforce to organize and track their leads, and the Rainshield customer support team is now
-          incorporating Zendesk to help with managing all of the support tickets that are being generated. The marketing
-          team is even planning on hosting a Zoom webinar on a design-your-own umbrella product they are about to unveil
-          soon!
+          Monsoon allows software engineers to easily load test their single-page application in anticipation of traffic spikes or overall business growth. 
+          Monsoon can simulate loads of up to 20,000 concurrent users, and tests can be of any duration, from minutes to weeks or longer. 
+          Engineers can also see their load test results visualized in a near real time dashboard.
         </p>
+        <br />
+        <h3>1.3 Brain Boost, a Hypothetical User Story</h3>
         <br />
         <p>
-          Prior to this growth, user data was largely managed in the production database. However, these teams are not
-          only requiring different views of this data to accomplish their goals but are also creating new sources of
-          user data as they interact with customers through a variety of platforms and tools.
-        </p>
-        <br />
-        <h3>1.4 Data Silos</h3>
-        <br />
-        <p>While these third-party SaaS tools cater to the needs of each department well, user data is beginning to
-          proliferate the organization, in terms of both the data produced and collected. Data is becoming scattered
-          across the different tools each team is using.
-        </p>
-        <figure>
-          <img src="assets/images/introduction/6_data_silos_gif_alt.gif" class="case-study-image" alt="">
-          <figcaption>Data captured by different tools live in data silos.</figcaption>
-        </figure>
-        <br />
-        <p>
-          These tools were not designed with integration in mind, and it is becoming more challenging to have a unified
-          understanding of a single user and how they are interacting with Rainshield and its product. Each tool has
-          access to only a portion of the customer’s information, but not the whole picture.
+          To see load testing in action, let’s spend some time with the engineering team at Boost Health. 
+          Boost is a rapidly-growing startup in the health and wellness space.
         </p>
         <br />
         <p>
-          These SaaS tools, that have increased productivity, have now become known as data silos. <strong>Data goes in,
-            but it doesn’t come out</strong>.
-        </p>
-        <br />
-        <p>
-          The industry agrees that this is a challenge:
-        </p>
-        <figure>
-          <img src="assets/images/introduction/7_colinzima.png" class="case-study-image" alt="">
-        </figure>
-        <h3>1.5 User Data</h3>
-        <br />
-        <p>
-          To better understand the ramifications of data silos, let's turn back to our company Rainshield.
+          The stakes are high. Boost’s marketing team has spent months planning the product launch for its new Brain Boost supplement. 
+          It’s Boost’s biggest product launch ever, and business executives want to close new rounds of venture capital funding based on the success of Brain Boost. 
         </p>
         <br />
         <figure>
-          <img src="assets/images/introduction/8_Susy.png" class="case-study-image" alt="">
-          <figcaption>A customer's data is fragmented by third-party tools.</figcaption>
+          <img src="assets/images/1-introduction/brain.svg" class="case-study-image" alt="">
+          <figcaption>Going all in on Brain Boost.</figcaption>
         </figure>
         <br />
         <p>
-          Meet Susy, a Rainshield customer. According to her profile in Salesforce, Susy has purchased six umbrellas for
-          her friends and family. However, Zendesk indicated that she called two times complaining about the color of
-          some of her umbrellas. Susy is excited about picking her own umbrella color and is signed up to attend the
-          Zoom webinar unveiling the new design-your-own product. When this data about Susy lives in different tools, it
-          becomes difficult to access a composite picture of Susy.
+          Boost expects more traffic than their site has ever seen on launch day. 
+          They’re predicting peaks of 4,000 concurrent users. 
+          The engineers at Boost are tasked with making sure the site can withstand all that traffic, so they decide to run load tests.
         </p>
-        <br />
-        <h3>1.6 Analyzing and Leveraging User Data</h3>
         <br />
         <p>
-          Susy's data lives in only three tools, but it's easy to imagine that Rainshield could use many more tools that
-          capture different pieces of data for other users. They might have thousands of different customers buying
-          their umbrellas, some of whom fit Susy’s exact profile. When data can be collected in one place, Rainshield
-          can begin to see patterns among these users.
+          But before we discuss these load tests, it’s important to note that the Boost website is a single page application. 
+          This has important implications for load testing.
         </p>
-        <figure>
-          <img src="assets/images/introduction/9_rainshield_users.png" class="case-study-image" alt="">
-          <figcaption>Aggregating user profiles and finding patterns.</figcaption>
-        </figure>
+        <br />
+        <h3>1.4 What is a Single Page Application?</h3>
+        <br />
+        <p>A single page application is a web app comprised of just a single HTML page. Unlike a traditional website, after the initial page load, there are no page reloads. 
+          The content of the single page is just repeatedly updated on the fly using browser-side JavaScript.
+        </p>
         <br />
         <p>
-          But even with this user data gathered for analysis in one place, how can these insights be used to impact
-          day-to-day operations?
+          SPAs have some significant advantages over more traditional websites:
         </p>
-        <figure>
-          <img src="assets/images/introduction/10_insights_action.png" class="case-study-image" alt="">
-          <figcaption>Turning insights into action.</figcaption>
-        </figure>
-        <br />
-        <p>
-          Let’s say Rainshield would like to use what they know about Susy and other customers that match her profile in
-          an attempt to increase sales. They believe that this group of users will be especially interested in the new
-          umbrella colors that Rainshield just rolled out, and they would like to prompt these customers with a custom
-          chat message via Intercom the next time they log on. But before this desired action can take place, Rainshield
-          still needs to provide Intercom with this specific list of customers. In other words, making insights
-          actionable still requires work. Rainshield needs to map relevant user data to Intercom in the particular
-          format that Intercom requires. This process can be thought of as <strong>data syncing</strong>.
-        </p>
-        <br />
-        <figure>
-          <img src="assets/images/introduction/11_users_to_intercom.png" class="case-study-image" alt="">
-          <figcaption>Syncing user data to third-party tools.</figcaption>
-        </figure>
-        <br />
-        <p>
-          So let’s take a step back and recap the obstacles that Rainshield and companies like it are facing. Important
-          user data is being trapped in silos as the quantity of Rainshield’s SaaS tools increases.
-        </p>
-        <br />
-        <p>Companies would like to: </p>
         <ul>
-          <li><em>Aggregate</em> data from these disparate third-party sources into one location for better analysis.
-          </li>
-          <li><em>Sync</em> relevant data to other third-party destinations to drive operations based on their findings.
-          </li>
+          <li>They reduce strain on server resources.</li>
+          <li>They speed up development by decoupling the frontend code from the backend code.</li>
+          <li>They provide a much more dynamic, responsive experience for the end user since there are no full page reloads.          </li>
         </ul>
         <br />
-        <h3>1.7 Challenges of User Data Integration</h3>
+        <h3>1.5 Boost Health and Their Load Testing Journey</h3>
         <br />
         <p>
-          There are several challenges of this type of data integration. User data stored in SaaS applications is
-          similar in structure to the data we see in traditional relational databases. However, unlike relational
-          databases, data in SaaS applications cannot be accessed with a simple query.
+          So let’s follow along with the Boost engineers as they load test their SPA.
         </p>
+        <br />
+        <h4>1.5.1 First Attempt - Protocol-based load testing with JMeter</h4>
+
+        <br />
+        <p>
+          One of the Boost engineers used a well-established, open-source load testing tool called Apache JMeter at a previous job, 
+          so this is the first option the team tries.
+        </p>
+        <br />
+        <p>
+          JMeter is categorized as a protocol-based load testing tool. Protocol-based load tests are the original type of load test. 
+          They involve traffic simulation at the HTTP protocol layer. 
+          For example, if loading a webpage triggers HTTP requests for 75 subresources, with protocol-based testing, the developers will need to write code to request the original page AND all 75 of those subresources.
+        </p>
+        <br />
+        <p>
+          This is clearly a great deal of work for the team. On top of this, JMeter is a complex tool and the learning curve is steep. 
+          The team settles in for many painful days of work ahead. 
+        </p>
+        <br />
         <figure>
-          <img src="assets/images/introduction/data_query.png" alt="" class="case-study-image-small">
-          <figcaption>User data acccessed via simple query to production database.</figcaption>
+          <img src="assets/images/1-introduction/unhappydev-jmeter.svg" class="case-study-image">
+          <figcaption>Protocol-based load testing can be painful.</figcaption>
         </figure>
         <br />
         <p>
-          Instead, this data must be retrieved via unique REST APIs, making it difficult to determine how to communicate
-          with each tool.
+          After the team gets their first JMeter load test working, their results seem strangely incomplete. It turns out JMeter is a poor choice for load testing SPAs. 
+          SPAs are JavaScript-intensive, but JMeter has no JavaScript interpreter and therefore can’t execute any JavaScript code. (The same holds true for other protocol-based load testing tools.) 
+          Therefore, the bulk of an SPA is untestable with JMeter. This is a dealbreaker. 
         </p>
-        <figure>
-          <img src="assets/images/introduction/data_api_horizontal.png" alt="" class="case-study-image">
-          <figcaption>User data acccessed via call to REST API.</figcaption>
-        </figure>
+        <br />
+        <h4>1.5.2 Second Attempt - Browser-based load testing with Selenium</h4>
         <br />
         <p>
-          Furthermore, factors such as limited documentation, rate limits on API requests, managing potential network
-          errors, and ever-changing API schemas can make transporting large amounts of data a challenging and slow
-          process.
+          Another engineer on the Boost team knows of a different tool called Selenium and knows that Selenium can be used for browser-based load testing. 
+        </p>
+        <br />
+        <p>
+          <Strong>Browser-based load testing</strong> simulates web traffic using real web browsers rather than naked network requests. 
+          Since we’re using browser instances to direct traffic to the site being tested, 
+          those browsers clearly have built-in JavaScript interpreters and are fully capable of handling SPAs, unlike protocol-based load testing tools.
+        </p>
+        <br />
+        <p>
+          An even more fundamental difference between protocol-based load testing and browser-based load testing tools like Selenium is this: 
+          Is the core unit we care about, is that the individual network request? Or is it an action the end user takes (which could actually result in 100 or more network requests)?
+        </p>
+        <br />
+        <p>
+          In Boost’s case, it’s an action a website user takes, like loading the homepage, 
+          viewing product details or clicking the “Add to Cart” button.
+        </p>
+        <br />
+        <p>
+          Furthermore, thinking in terms of end user actions rather than lower-level network requests means browser-based load testing is significantly less complex than its protocol-based counterpart. 
+          When planning how to test the Boost site, the engineers can think at a higher level of abstraction, which reduces bugs, makes for a better developer experience and saves significant amounts of developer time.
+        </p>
+        <br />
+        <p>
+          Returning to Selenium, it's a suite of browser-based test automation tools. 
+          It was never actually designed for load testing, but that's how Selenium came to be used by many developers.
+        </p>
+        <br />
+        <p> 
+          The team runs their first browser-based load test using Selenium. 
+          It’s a fairly small-scale test simulating 5 users concurrently visiting the Boost Health website. This test goes off without a hitch. 
+        </p>
+        <br />
+        <p>
+          Next, they test 100 concurrent users. This test doesn’t go so well. Selenium is a tool that runs locally on one of the engineers’ laptops, and testing 100 users means spinning up 100 browser instances. This is too resource-intensive for a single laptop. 
+          And the actual number of users the Boost team needs to test is 4000, not 100. So the team has run out of local computing resources before they’re able to apply sufficient load to the Boost site.
+        </p>
+        <br />
+        <figure>
+          <img src="assets/images/1-introduction/unhappydev-selenium.svg" class="case-study-image">
+          <figcaption>Local browser-based load testing doesn’t cut it.</figcaption>
+        </figure>
+        <p>
+          Clearly this is unworkable. Because browser-based load testing is so resource intensive, the Boost engineers need a solution that’s hosted in the cloud.
+        </p>
+        <br />
+        <h3>1.5.3 Third Attempt - Browser-based load testing with Flood</h3>
+        <br />
+        <p>
+          Researching cloud-hosted browser-based load testing, the team quickly discovers a platform called Flood. 
+          Flood is an industry leader in the cloud-hosted, browser-based load testing space. Their platform is definitely capable of generating the 4000 concurrent users Boost needs to load test their site. However, Flood is very expensive. 
+          We'll return to Flood later, but for now, the cost is a major drawback, enough to rule Flood out.
+        </p>
+        <figure>
+          <img src="assets/images/1-introduction/unhappydev-flood.svg" class="case-study-image">
+          <figcaption>Flood gets the job done but costs too much.</figcaption>
+        </figure>
+        <h4>The Journey So Far</h4>
+        <p>
+          Let's summarize where the Boost engineers are right now. They initially tried protocol-based load testing. This was unsuccessful because protocol-based tools can't test an SPA's JavaScript code. 
+          Next, they tried local browser-based load testing. 
+          This too was unsuccessful because browser-based load testing is too resource intensive for a single machine. Third, they tried browser-based load testing in the cloud with the Flood platform. 
+          However, this proved prohibitively expensive. 
+        </p>
+        <br />
+        <p>
+          So the team searches for a more economical option for browser-based load testing in the cloud. 
+          In short order, they come across an open source tool called Monsoon.
         </p>
         <br />
         <!-- Section 2 -->
