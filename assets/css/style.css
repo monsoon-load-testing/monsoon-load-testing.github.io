@@ -86,6 +86,7 @@ button::-moz-focus-inner {
 
 figure {
   text-align: center;
+  position: relative;
 }
 
 figcaption {
