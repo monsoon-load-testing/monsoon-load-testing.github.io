@@ -121,9 +121,6 @@
         </p>
         <br />
         <h3>1.3 Brain Boost, a Hypothetical User Story</h3>
-        <!-- <figure>
-          <img src="assets/images/introduction/5_Rainshield_SaaS.png" class="case-study-image">
-        </figure> -->
         <br />
         <p>
           To see load testing in action, let’s spend some time with the engineering team at Boost Health. 
@@ -135,8 +132,10 @@
           It’s Boost’s biggest product launch ever, and business executives want to close new rounds of venture capital funding based on the success of Brain Boost. 
         </p>
         <br />
-        [TO INSERT: Brain Boost pill bottle icon, maybe money icons too?]
-        [CAPTION: Going all in on Brain Boost]
+        <figure>
+          <img src="assets/images/1-introduction/brain.svg" class="case-study-image" alt="">
+          <figcaption>Going all in on Brain Boost.</figcaption>
+        </figure>
         <br />
         <p>
           Boost expects more traffic than their site has ever seen on launch day. 
@@ -189,8 +188,10 @@
           The team settles in for many painful days of work ahead. 
         </p>
         <br />
-        [TO INSERT: unhappy dev picture and JMeter logo]
-        [CAPTION: Protocol-based load testing can be painful]
+        <figure>
+          <img src="assets/images/1-introduction/unhappydev-jmeter.svg" class="case-study-image">
+          <figcaption>Protocol-based load testing can be painful.</figcaption>
+        </figure>
         <br />
         <p>
           After the team gets their first JMeter load test working, their results seem strangely incomplete. It turns out JMeter is a poor choice for load testing SPAs. 
@@ -240,8 +241,10 @@
           And the actual number of users the Boost team needs to test is 4000, not 100. So the team has run out of local computing resources before they’re able to apply sufficient load to the Boost site.
         </p>
         <br />
-        [TO INSERT: unhappy dev picture and Selenium logo]
-        [CAPTION: Local browser-based load testing doesn’t cut it.]
+        <figure>
+          <img src="assets/images/1-introduction/unhappydev-selenium.svg" class="case-study-image">
+          <figcaption>Local browser-based load testing doesn’t cut it.</figcaption>
+        </figure>
         <p>
           Clearly this is unworkable. Because browser-based load testing is so resource intensive, the Boost engineers need a solution that’s hosted in the cloud.
         </p>
@@ -253,11 +256,11 @@
           Flood is an industry leader in the cloud-hosted, browser-based load testing space. Their platform is definitely capable of generating the 4000 concurrent users Boost needs to load test their site. However, Flood is very expensive. 
           We'll return to Flood later, but for now, the cost is a major drawback, enough to rule Flood out.
         </p>
-        [TO INSERT: unhappy devs picture and Flood logo and price up arrow]
-        [CAPTION: Flood gets the job done but costs too much.]
-
+        <figure>
+          <img src="assets/images/1-introduction/unhappydev-flood.svg" class="case-study-image">
+          <figcaption>Flood gets the job done but costs too much.</figcaption>
+        </figure>
         <h4>The Journey So Far</h4>
-        <br />
         <p>
           Let's summarize where the Boost engineers are right now. They initially tried protocol-based load testing. This was unsuccessful because protocol-based tools can't test an SPA's JavaScript code. 
           Next, they tried local browser-based load testing. 
