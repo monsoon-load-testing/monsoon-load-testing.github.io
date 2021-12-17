@@ -493,6 +493,92 @@
           The good news is that the Monsoon team has already invested the engineering hours so you don't have to. We also charge no platform fees. You only pay the AWS charges stemming from the infrastructure spun up to run your test. This makes Monsoon significantly more affordable than either cloud-based SaaS solutions or DIY approaches.​
         </p>
         <br/>
+        <!-- Section 4-->
+        <h2>4 Design Decisions</h2>
+        <br />
+        <p>
+          Early on, we made two design decisions that strongly shaped the Monsoon framework. The first was choosing to focus on high scalability. The second was striving to provide near real time results to engineers using Monsoon.
+        </p>
+        </br>
+        <h3>4.1 Scalability</h3>
+        <p>We set out to build a framework able to simulate as many users as possible, for as long as possible, as cheaply as possible. To accomplish this, we focused on the scalability of the load generation engine and of the data pipeline.​</p>
+        <br/>
+        <h4>Optimizing the Load Generation Engine</h4>
+        <figure>
+          <img src="assets/images/4-design_decisions/engine_figure.svg">
+          <figcaption>Fig. 4.1: How Puppeteer stacks up against Selenium</figcaption>
+        </figure>
+        <br/>
+        <p>​We had several options for simulating virtual users via headless browser instances. Selenium is the industry default. One Selenium app instance is able to simulate 5 virtual users. We compared this to Google's Puppeteer discussed earlier. One Puppeteer app instance is able to simulate 20 virtual users.</p>
+        <p>This difference in simulated users per app instance is hugely important. Since each app instance requires its own execution environment, increasing the number of simulated users per app instance reduces the compute resources you need. And since AWS's billing model is "only pay for what you use", using compute resources more efficiently directly leads to cost savings.</p>
+        <p>By choosing Puppeteer over Selenium to generate load, we were able to test 4 times as many users for the same price.</p>
+        <br/>
+        <h4>Optimizing the Data Pipeline</h4>
+        <figure>
+          <img src="assets/images/4-design_decisions/elt_defs.svg">
+        </figure>
+        <p>Because simulating virtual users and extracting session metrics generates so much data, Monsoon naturally uses a pipeline to move data from one point to another in our system. Two common data pipeline patterns are ELT and ETL. The ‘E’ stands for Extract, the ‘L’ stands for Load and ‘T’ stands for Transform.</p>
+        <p>The choice of one pattern over the other has significant impact on scalability.</p>
+        <br/>
+        <h5>An ELT Pipeline</h5>
+        <figure>
+          <img src="assets/images/4-design_decisions/elt_diag.svg">
+          <figcaption>Fig. 4.2: An ELT data pipeline’s tradeoffs</figcaption>
+        </figure>
+        <br/>
+        <p>ELT is the current industry standard. With ELT, we load all the raw data into storage before making any changes to that data. Benefits to this approach include simplicity and flexibility. Because all the data is stored together, all transformations can be done in one place. And since you hang on to all the raw data, you're free to run further analyses and change the data's final form at any point in the future.​</p>
+        <p>But ELT has drawbacks as well. You need to transmit all data from the extraction point into storage. This can result in substantial bandwidth costs and transmission times. Furthermore, once the data is loaded into storage, you'll need to pay ongoing storage fees.</p>
+        <br/>
+        <h5>An ETL Pipeline</h5>
+        <figure>
+          <img src="assets/images/4-design_decisions/etl_diag.svg">
+          <figcaption>Fig. 4.3: An ETL data pipeline’s tradeoffs</figcaption>
+        </figure>
+        <br/>
+        <p>ETL is also an industry standard. With ETL, we transform the data between the extraction and storage points, so that we're only storing data that's already been transformed. Benefits to this approach include reduced transmission times and costs. You reduce the volume of data right after the extraction step, thus reducing the time and bandwidth costs associated with moving that data into storage. And since you're not storing your entire raw data set, storage costs are naturally reduced.​</p>
+        <p>But there are cons to ETL. The first is transformation complexity. Your data may require transformations at multiple steps along the data pipeline. This can become technically complex. The ETL pattern also lacks flexibility. Since we're only storing transformed data, we effectively lock ourselves into a final form of the data before starting the pipeline.</p>
+        <p>Another concern with ETL is data integrity. If something goes wrong in the pipeline, causing you to lose all or part of the transformed data, you don't have raw data to fall back on. The data would need to be regenerated, which may or may not be possible.</p>
+        <br/>
+        <figure>
+          <img src="assets/images/4-design_decisions/etl_overview.svg">
+          <figcaption>Fig. 4.4: Monsoon is an ETL pipeline</figcaption>
+        </figure>
+        <br/>
+        <p>Ultimately we found the ETL pattern a better fit for our use case. We were willing to deal with the transformation complexity, and final data shape lock-in actually wasn't a problem for us. Every load test Monsoon runs shows the same metrics, so the final shape of the data never changes.</p>
+        <br/>
+        <figure>
+          <img src="assets/images/4-design_decisions/etl_table.svg">
+          <figcaption>Fig. 4.5: ETL is a better fit for Monsoon</figcaption>
+        </figure>
+        <br />
+        <p>Let's quantify this difference by looking at database writes. Say we run two different load tests with the test script, virtual user count and duration held constant. If Monsoon's data pipeline were to follow the ELT pattern, the number of writes required increases by a factor of about 800. And to generate the same final graph in the local Weather Channel dashboard, 2 megabytes of information in an ETL pipeline would need to be 24 gigabytes of information in an ELT pipeline.</p>
+        <p>As we mentioned earlier, AWS uses a billing model of “only pay for what you use”. Therefore if we use less storage and transmit less data, it costs less. ​So holding the infrastructure budget constant, a user is able to run load tests that are many orders of magnitude larger since we designed Monsoon with an ETL data pipeline.​</p>
+        </br>
+        <h3>4.2 Near Real Time</h3>
+        <br />
+        <p>Now let's turn to the design decisions we made so that Monsoon can display results in near real time.​</p>
+        <p>First let's clarify some terminology. <strong>Real time data</strong> is data that's collected, processed and analyzed on a continual basis. The resulting information should be available to the end user immediately after being generated.​</p>
+        <p>And <strong>near real time</strong> is just real time, but with a delay introduced beforehand. Teams view a situation as it existed in the recent past rather than as it is right now. (Note that there isn't a precise cut off for what is or isn't considered near real time.)​</p>
+        <br />
+        <h4>Why Near Real Time?</h4>
+        <br/>
+        <p>Load tests can be really long. It's not uncommon to run a test for hours, days or even weeks. Because of this, Monsoon can handle tests of arbitrary length – the limiting factor is only the user's AWS budget.​</p>
+        <p>But we don't want our users to have to wait until a test completes before they see results – we'd like them to see results as soon as possible.​</p>
+        <p>This means that Monsoon needs to extract, transform and load data into the database on a regular basis so it can be queried and displayed on the locally-hosted dashboard.​</p>
+        <br/>
+        <h4>Near Real Time Pros and Cons</h4>
+        <br/>
+        <p>But building Monsoon as a near real time framework has pros and cons.</p>
+        <figure>
+          <img src="assets/images/4-design_decisions/near_real_time_webs.svg">
+          <figcaption>Fig. 4.6: Monsoon’s near real time dashboard prevents this</figcaption>
+        </figure>
+        <br/>
+        <p>On the pro side, engineers can monitor their tests in near real time, spotting issues as they come up rather than waiting until the entire test completes. Additionally, if the load test is important enough, it can become something of an event at the company running it. While researching our project, we actually came across stories of large teams reserving conference rooms, ordering food and watching the load test results roll in live.​</p>
+        <p>But a major drawback to implementing a near real time data pipeline is the complexity. There are a lot of components, and it's technically challenging to coordinate all of them so as to avoid losing or double counting data points. We'll return to this complexity later.</p>
+        <p>Now let's move on to examine Monsoon's architecture in greater detail.</p>
+        <br/>
+        <h2>5 Monsoon's Architecture</h2>
         <!--Section 5-->
         <h2>5 Using Tapestry</h2>
         <br />
