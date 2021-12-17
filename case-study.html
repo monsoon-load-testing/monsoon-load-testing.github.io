@@ -277,173 +277,117 @@
         </p>
         <br />
         <!-- Section 2 -->
-        <h2>2 Existing Solutions</h2>
+        <h2>2 Overview of Monsoon</h2>
         <br />
         <p>
-          There are four main options for integrating data between third-party tools:
+          Monsoon is browser-based load testing platform hosted in the cloud. We built Monsoon to allow small- to medium-sized companies to load test their SPAs in a simple and scalable way, allowing them to get insights into its performance in near real time. ​
         </p>
-        <ol>
-          <li>Manually move files between tools</li>
-          <li>Use pre-built connectors</li>
-          <li>Create custom connectors</li>
-          <li>Build a complete data pipeline</li>
-        </ol>
-        <br />
-        <h3>2.1 Manually Move Files</h3>
-        <br />
-        <p>Let’s talk about the first option at Rainshield’s disposal, manually moving files between tools.
+        <br/>
+        <h3>Four Key Components</h3>
+        <p>
+          Monsoon uses Amazon Web Services as its cloud provider, and all the Monsoon infrastructure is deployed directly into your AWS account. This infrastructure has 4 key components: Load Generation, Transformation, Storage and Visualization. 
         </p>
         <figure>
-          <img src="assets/images/solutions/16_csvfile_gif_sm.gif" class="case-study-image" alt="">
-          <figcaption>Manually exporting CSV files.</figcaption>
+          <img src="assets/images/2-overview/monsoon_architecture_all.svg" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.1: Monsoon's 4 key components</figcaption>
         </figure>
         <br />
-        <p>
-          Let’s say that Rainshield wanted to make sure that Salesforce had all of the contacts from the Zoom webinar
-          revealing the new design-your-own umbrella.
-        </p>
+        <h4>Load Generation</h3>
         <br />
-        <p>
-          They could simply export the list of webinar attendees from Zoom to a CSV file and then import that file into
-          Salesforce. However, this might result in duplicate data and could become tedious if you had to do this task
-          often.
-        </p>
-        <br />
-        <h3>2.2 Use Pre-built Connectors</h3>
-        <br />
-        <p>
-          Another possibility would be to use a company that creates these connectors for you, like Zapier. After
-          inputting some information about their Zoom and Salesforce accounts, Rainshield can choose from a menu of
-          pre-built connectors to set up the flow of data between them.
-        </p>
         <figure>
-          <img src="assets/images/solutions/17_zapier.png" class="case-study-image">
-          <figcaption>Zapier's Connectors.</figcaption>
+          <img src="assets/images/2-overview/architecture_load_generation.svg" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.2: Load Generation architecture</figcaption>
         </figure>
-        <br />
         <p>
-          This, however, would not allow much flexibility regarding which parts of the data would be shared between the
-          two apps. There may still be duplicate data, or the selection of apps available may not fit all use cases.
+          A​t the start of the load test, Monsoon provisions multiple compute instances to generate load. The number of instances scales linearly with the needs of the test. Currently Monsoon is able to handle up to 20,000 virtual users.
         </p>
         <br />
-        <p>
-          Another type of pre-built connection exists in some tools' settings. For example, Zoom can integrate directly
-          with Salesforce by simply configuring your settings to export your data. This isn’t always the case though,
-          and more than likely, Rainshield will not find connectors for every tool it uses.
-        </p>
-        <br />
-        <h3>2.3 Create Custom Connectors</h3>
-        <br />
-        <p>
-          The third course of action is that Rainshield could designate one or two software engineers to begin building
-          custom connections to pipe data directly into all of the tools they use. The benefit of this option is you can
-          flexibly choose what data to send. However, these engineers would have to research these tools' APIs and write
-          connectors not only to extract data, but also to sync data as well.
-        </p>
-        <br />
-        <p>
-          This might not be too bad if the number of tools the company used was very small. For example, if Rainshield
-          only needed to connect Zoom and Salesforce with Mailchimp, then they may only have to write a few connectors
-          to ensure they all shared the same data.
-        </p>
         <figure>
-          <img src="assets/images/solutions/18_threesources.png" class="case-study-image">
-          <figcaption>Custom connectors with only three tools.</figcaption>
+          <img src="assets/images/2-overview/cloud_purple.gif" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.3: Headless Chrome instances in the cloud</figcaption>
         </figure>
-        <br />
         <p>
-          However, if your company already uses several tools or plans on growing in the future, this can quickly get
-          out of hand. And this is to say nothing of the fact that these connectors would also have to be maintained.
+          Inside one of these compute instances, we use a tool called Puppeteer to simulate virtual users visiting the Boost Health website. Puppeteer is a powerful, browser-based testing library for Node, distributed as an npm package. Puppeteer provides us with a high-level API that gives us full control over headless Chrome instances.
         </p>
+        <br/>
         <figure>
-          <img src="assets/images/solutions/18_custom_connectors_crop.gif">
-          <figcaption>Exponential growth from an increasing number of custom API connectors.</figcaption>
+          <img src="assets/images/2-overview/puppeteer_virtual_user.gif" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.4: Monsoon uses Puppeteer to simulate users visiting a website</figcaption>
         </figure>
-        <br />
         <p>
-          If one API changed, every tool that connected to it would also need to be changed. And the reality is that
-          even small companies use anywhere between 10 to 50 tools. That would require a lot of valuable engineering
-          time.
+          Puppeteer is very easy to use. For example, to simulate a user filling out a form, you just pass a CSS selector and the data as arguments to the `type` method. And to simulate a user clicking a button, just pass that button’s CSS selector to the `click` method.
         </p>
-        <br />
-        <h3>2.4 Build a Complete Data Pipeline</h3>
-        <br />
+        <br/>
         <p>
-          The best and most complete solution is our last option, implementing an end-to-end user data pipeline, with a
-          cloud data warehouse at the center.
+          Thanks to Puppeteer, Monsoon is able to abstract away a lot of the complexity of the load testing process. With Monsoon, you no longer write code to hit specific backend API endpoints. Instead, you write a simple Puppeteer script that describes the end user actions you want to simulate. Then you configure the load test by specifying the number of simulated users and the duration of the test.
         </p>
-        <br />
+        <br/>
+        <p>
+          Once we have the test script and its configuration, Monsoon uses Puppeteer to create and control headless Chrome instances. Each of those Chrome instances executes the actions defined by the Boost engineers in their test script, hitting dozens or hundreds of backend API endpoints in the process.
+        </p>
+        <br/>
         <figure>
-          <img src="assets/images/solutions/3_pipelineoverviewcolor.png" class="case-study-image">
-          <figcaption>A complete user data pipeline.</figcaption>
+          <img src="assets/images/2-overview/puppeteer_load_testing.gif" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.5: Simulated users execute the test script, and Monsoon records the metrics</figcaption>
         </figure>
-        <br />
         <p>
-          From an engineering perspective, this approach allows access to data ingestion and syncing tools that remove
-          the headache of working with third-party APIs, while also providing you with the flexibility that custom
-          connectors offer, i.e. you choose exactly what data to send.
+          Then Monsoon records performance metrics for each end user action and saves the data in JSON format. This process repeats for the duration of the load test.
         </p>
+        <br/>
+
+        <h4>Transformation</h3>
         <br />
-        <h4>Benefits of Warehouse-Centric Pipelines</h4>
         <figure>
-          <img src="assets/images/solutions/19_warehousecenter_gif.gif"">
-          <figcaption>Warehouse-centric data integration.</figcaption>
+          <img src="assets/images/2-overview/architecture_transformation.svg" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.6: Transformation architecture</figcaption>
+        </figure>
+        <p>
+          This load generation step can result in a serious amount of data. A one-hour test can easily generate hundreds of millions of data records. Let’s examine how Monsoon’s transformation architecture manages all this data.
+        </p>
+        <br/>
+        <figure>
+          <img src="assets/images/2-overview/aggregation_pipeline.gif" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.7: Monsoon aggregates and stores test results</figcaption>
+        </figure>
+        <p>
+          Once we have our first raw test results ready, Monsoon performs a pre-processing step inside the compute instances. This readies the results to enter Monsoon's data pipeline, beginning the transformation step we see above. In this step, the test results for all virtual users are aggregated in increments of 15 seconds.​ These aggregated test results then need to be stored in a database.
+        </p>
+        <br/>
+
+        <h4>Storage</h3>
+        <br />
+        <figure>
+          <img src="assets/images/2-overview/architecture_storage.svg" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.8: Storage Architecture</figcaption>
+        </figure>
+        <p>
+          or our Storage component, we used a time-series database. This type of database is optimized for time-series data, which is simply data points that are ordered by timestamp. We'll talk more about time-series data and why we opted for a time-series database later in this case study.​
+        </p>
+        <br/>
+        <h4>Visualization</h3>
+        <figure>
+          <img src="assets/images/2-overview/architecture_visualization.svg" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.9: Monsoon's Weather Channel, a near real time dashboard</figcaption>
         </figure>
         <br/>
         <p>
-          Placing a cloud warehouse at the center of your pipeline also provides several other benefits. 
+          Test results stored in the database can be visualized using Monsoon’s Weather Channel. Weather Channel is a locally-hosted dashboard that lets you see how your site actually performed under load.
         </p>
         <br/>
-        <p>Cloud data warehouses:</p>
+        <figure>
+          <img src="assets/images/2-overview/metrics.svg" class="case-study-image-large" alt="">
+          <figcaption>Fig. 2.10: Weather Channel gives you insight into the performance of your app</figcaption>
+        </figure>
+        <br/>
+        <p>
+          Specifically, Weather Channel allows you to track:
+        </p>
         <ul>
-          <li>Allow for the storage of large amounts of data with very little infrastructure management and instant scalability.</li>
-          <li>Serve as a <em>single source of truth</em> if two departments ever had conflicting data.</li>
-          <li>Enable the use of data modeling and analytics tools, which can aid in making important business intelligence decisions.</li>
-          <li>Offer the ability to combine and filter data from multiple sources in order to sync with another destination.</li>
+          <li>Response time</li>
+          <li>Concurrent users </li>
+          <li>Transaction rate (end user actions performed per minute)</li>
+          <li>Pass ratio</li>
         </ul>
-        <br/>
-        <p>
-          This warehouse-centric pipeline helps aggregate all of your data into one accessible place so you can create unified models and sync them to the tools your teams need. 
-        </p>
-        <figure>
-          <img src=" assets/images/solutions/20_rudderstackquote.png" class="case-study-image" alt="">
-        </figure>
-        <h3>2.5 Data Pipeline Solutions</h3>
-        <br />
-        <p>
-          When deploying this type of user data pipeline, the two primary options are to use a proprietary hosted
-          solution, such as the one offered by the company Rudderstack, or to use open-source tools to configure your
-          own pipeline.
-        </p>
-        <figure>
-          <img src="assets/images/solutions/21_rudderstack_v_selfhosted.png" class="case-study-image" alt="">
-        </figure>
-        <p>
-          The self-hosted option allows for the inclusion of fully open-source tools and grants you full ownership over
-          your pipeline infrastructure. This means you can customize it any way you like. But this solution doesn’t have
-          any out-of-the-box features and would require a substantial amount of engineering time.
-        </p>
-        <br />
-        <p>
-          Rudderstack, on the other hand, only offers open-source event streaming, and also requires you to use their
-          infrastructure, leaving you with little control. However, they provide a ton of features and also abstract
-          away all of the infrastructure provisioning and management, making it extremely easy to deploy a user data
-          pipeline quickly.
-        </p>
-        <br />
-        <h4>Challenges of Pipeline Deployment</h4>
-        <br />
-        <p>
-          Building your own pipeline requires an extraordinary amount of time and effort to set up, provision, and
-          configure.
-        </p>
-        <br />
-        <p>
-          You need to make many different decisions about which tools to use for data ingestion and syncing and which
-          warehouse to select, and that’s not even mentioning all that goes into provisioning and maintaining pipeline
-          infrastructure. To say the least, this is an extremely complex process.
-        </p>
-        <br />
         <!-- Section 3-->
         <h2>3 Who should use Monsoon?</h2>
         <br />
@@ -451,7 +395,7 @@
           Let's take a look at Boost's other browser-based load testing options.
         </p>
         <figure>
-          <img src="assets/images/3-who_should_use_monsoon/3_1_SaaS_vs_DIY.gif">
+          <img src="assets/images/3-who_should_use_monsoon/3_1_SaaS_vs_DIY.gif" class="case-study-image-large" alt="">
           <figcaption>Fig. 3.1: Browser-based load testing options</figcaption>
         </figure>
         </br>

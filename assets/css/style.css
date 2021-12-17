@@ -305,6 +305,18 @@ label {
   width: 70%;
 }
 
+.case-study-image-large {
+  margin: 40px auto;
+  display: block;
+  width: 85%;
+}
+
+.case-study-image-full {
+  margin: 40px auto;
+  display: block;
+  width: 100%;
+}
+
 .case-study-image-small {
   margin: 40px auto;
   display: block;
