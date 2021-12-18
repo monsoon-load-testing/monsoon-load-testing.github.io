@@ -493,7 +493,7 @@
           <figcaption>Fig. 4.5: ETL is a better fit for Monsoon</figcaption>
         </figure>
         <br />
-        <p>Let's quantify this difference by looking at database writes. Say we run two different load tests with the test script, virtual user count and duration held constant. If Monsoon's data pipeline were to follow the ELT pattern, the number of writes required increases by a factor of about 800. And to generate the same final graph in the local Weather Channel dashboard, 2 megabytes of information in an ETL pipeline would need to be 24 gigabytes of information in an ELT pipeline.</p>
+        <p>Let's quantify this difference by looking at database writes. Say we run two different load tests - each has 4000 virtual users and has the same duration and test script. If Monsoon's data pipeline were to follow the ELT pattern, the number of writes required increases by a factor of about 800. And to generate the same final graph in the local Weather Channel dashboard, 2 megabytes of information in an ETL pipeline would need to be 24 gigabytes of information in an ELT pipeline.</p>
         <p>As we mentioned earlier, AWS uses a billing model of “only pay for what you use”. Therefore if we use less storage and transmit less data, it costs less. ​So holding the infrastructure budget constant, a user is able to run load tests that are many orders of magnitude larger since we designed Monsoon with an ETL data pipeline.​</p>
         </br>
         <h3>4.2 Near Real Time</h3>
