@@ -520,307 +520,162 @@
         <p>But a major drawback to implementing a near real time data pipeline is the complexity. There are a lot of components, and it's technically challenging to coordinate all of them so as to avoid losing or double counting data points. We'll return to this complexity later.</p>
         <p>Now let's move on to examine Monsoon's architecture in greater detail.</p>
         <br/>
-        <h2>5 Monsoon's Architecture</h2>
         <!--Section 5-->
-        <h2>5 Using Tapestry</h2>
-        <br />
-        <h3>5.1 Prerequisites & Installing Tapestry</h3>
-        <p>
-          Getting started with Tapestry is pretty simple. You will need the following:
-        </p>
+        <h2>5 Monsoon's Architecture</h2>
+        <br/>
+        <figure>
+          <img src="assets/images/5-architecture/slide43.svg">
+          <figcaption>Fig. 5.1: Monsoon’s load generation architecture</figcaption>
+        </figure>
+        <br/>
+        <p>The purpose of our load generation architecture is to create a given number of virtual users, have them perform scripted actions on the target website or web app, and record metrics about those actions.​</p>
+        <br/>
+        <h3>Load Generation</h3>
+        <br/>
+        <figure>
+          <img src="assets/images/5-architecture/slide44.svg">
+          <figcaption>Fig. 5.2: Monsoon’s load generation app and its three key components</figcaption>
+        </figure>
+        <br/>
+        <p>At the core of our load generation architecture is a Node app. The app’s critical components are:​</p>
         <ul>
-          <li>Node and NPM</li>
-          <li>An AWS account and AWS CLI</li>
-          <li>Docker</li>
+          <li>Weather Station</li>
+          <li>A user script</li>
+          <li>Runner.js</li>
         </ul>
-        <br />
-        <p>
-          If you were the developer, you would first need Node and NPM installed since Tapestry is a Node package. Since
-          Tapestry provisions several AWS resources, you are required to have an AWS account and the AWS Command Line
-          Interface configured on your machine. Finally, you will need to have a Docker account and have it installed on
-          your machine.
-        </p>
-        <br />
-        <p>
-          After these preliminary steps, all you would need to do to get started is run <code
-            class="command">npm i -g tapestry-pipeline</code>, and a host of commands will be provided to you.
-        </p>
-        <br />
-        <h3>5.2 Tapestry Commands</h3>
+        <br/>
+        <h4>Weather Station</h4>
+        <br/>
+        <p>Engineers can use the Weather Station library to write their test script. Weather Station makes use of methods from the Performance API built into browsers and gives engineers a way to write code to measure how long individual user actions take.​</p>
+        <br/>
+        <h4>Test Script</h4>
+        <br/>
+        <p>Our next load generation component is the user's test script. It's a set of instructions describing the exact actions the headless browser instances should take and in what order. Combined with Puppeteer, this test script is what allows Monsoon to program a virtual user.</p>
+        <p>For example, returning to the engineers at Boost Health, their user test script might instruct the headless browser instance to load the main Boost Health webpage, wait two seconds, load a product details page, wait 10 seconds, then click the "Add to Cart" button.</p>
+        <br/>
+        <h4>Runner</h4>
+        <br/>
+        <p>Runner.js is a coordination script. It creates 20 headless Chrome instances controlled by Puppeteer to simulate 20 virtual users. Runner.js then instructs each virtual user to execute the commands listed in the user's test script and stores the resulting session metrics for each of those virtual user actions.​</p>
+        <p>To summarize, our Node app creates virtual users, instructs them to perform actions, and saves metric data about the actions taken.​</p>
+        <p>But how do we actually run the app? We use AWS ECS and Fargate.</p>
+        <br/>
+        <h4>Fargate and ECS</h4>
+        <br/>
         <figure>
-          <img src="assets/images/demo/26_commandlist_v2.png">
-          <figcaption>Tapestry's list of commands.</figcaption>
+          <img src="assets/images/5-architecture/slide49.svg">
+          <figcaption>Fig. 5.3: Monsoon’s load generation app runs on Fargate and uses ECS</figcaption>
         </figure>
-        <br />
-        <p>
-          As a new user, the first Tapestry command you would run is <code class="command">tapestry init</code>.
-        </p>
+        <br/>
+        <p>AWS Fargate is a serverless, pay-as-you-go compute engine that allows you to focus on building applications without managing servers. In effect, it's an AWS service that runs containerized applications.</p>
+        <p>To run our app and scale to more than 20 users, we containerized our Node app and passed it to ECS, the Elastic Container Service. ECS is used for container orchestration.​</p>
+        <p>For every block of 20 virtual users we wish to simulate, ECS spins up an additional Fargate instance to execute our containerized Node app.​ For example, to simulate 4000 users, ECS spins up 200 Fargate instances, each of which each of which executes one instance of our containerized app.​</p>
+        <p>So now that our load generation process has yielded session data for our virtual users, what do we do with it?</p>
+        <br/>
+        <h3>Transformation</h3>
+        <br/>
         <figure>
-          <img src="assets/images/demo/27_tapestry_init_computer.png" class="case-study-image-small">
-          <figcaption>Tapestry provides a CloudFormation template during the init command.</figcaption>
+          <img src="assets/images/5-architecture/slide51.svg">
+          <figcaption>Fig. 5.4: Monsoon’s transformation architecture</figcaption>
         </figure>
-        <br />
-        <p>
-          With <code class="command">tapestry init</code>, you give your project a name, and Tapestry will provision a
-          project folder along with an AWS CloudFormation template. This template allows you to provision and configure
-          AWS resources with code. In particular, this template is used to provision resources for the data ingestion
-          phase of the pipeline. What Tapestry provides for the syncing phase of your pipeline is dependent upon which
-          command you run next.
-        </p>
-        <br />
+        <br/>
+        <p>To answer this, let's take a closer look at our Transformation architecture. High-level, the Transformation architecture takes the session metric data stored on each Fargate instance, transforms it into a time series data format, then loads it into a time series database.​</p>
+        <p>A key piece of the Transformation component is our normalization logic. Before we dive into the details, let's clarify our definition of "normalization" since it can be a slippery term in the data science world.</p>
+        <p><strong>What is “normalization” exactly?</strong></p>
+        <p>We consider it a pre-processing step that facilitates data aggregation. When we normalize raw data, we're taking multiple data points with different raw timestamps and combining them into a single data point with one normalized timestamp. If you think of calculating a moving average, that's a good mental model.​</p>
+        <br/>
         <figure>
-          <img src="assets/images/demo/27_init_v2.gif">
-          <figcaption>Running <em>tapestry init</em> from the command line.</figcaption>
+          <img src="assets/images/5-architecture/arch_normalizer_process.gif">
+          <figcaption>Fig. 5.5: Think of “normalization” as calculating a moving average</figcaption>
         </figure>
-        <h3>5.3 Deploy vs. Kickstart Commands</h3>
-        <br />
-        <p>
-          Next, you have a choice between the <code class="command">tapestry deploy</code> or <code
-            class="command">tapestry kickstart</code> commands. Once you make your selection, Tapestry provides all the
-          necessary configuration files for the data syncing phase.
-        </p>
+        <br/>
+        <h4>Normalizer.js</h4>
+        <br/>
+        <p>Earlier we mentioned that the runner.js file in our Node app stores session metrics from every virtual user action. We're storing these metrics by temporarily saving them to the local filesystems of the Fargate instances.</p>
+        <br/>
         <figure>
-          <img src="assets/images/demo/28_deploy_v_kickstart.png" class="case-study-image">
+          <img src="assets/images/5-architecture/slide52.svg">
+          <figcaption>Fig. 5.6: Monsoon’s Normalizer.js script transforms metrics and moves them to an S3 bucket</figcaption>
         </figure>
-        <br />
-        <p>
-          Both commands automate the deployment of a fully operational pipeline, but <code
-            class="command">kickstart</code> includes two pre-configured sources, Zoom and Salesforce, along with one
-          destination, Mailchimp. These pre-configured third-party tools set up your pipeline to have immediate
-          end-to-end data flow, beginning with data ingestion and ending with data syncing into these tools. Regardless
-          of which command you choose, note that a Snowflake account is required for <em>both</em> <code
-            class="command">deploy</code> and <code class="command">kickstart</code>.
-        </p>
-        <br />
-        <h3>5.4 End-to-End Demo</h3>
-        <br />
-        <p>
-          To better show the full flow of data through a Tapestry pipeline, this section will walk through our <code
-            class="command">tapestry kickstart</code> command.
-        </p>
+        <br/>
+        <p>Alongside our load generation scripts, the Node app also runs a file called Normalizer.js. Normalizer.js polls the Fargate instance's local filesystem for new session metric data every 15 seconds. The Normalizer.js code applies transformations to any data it finds, then moves the transformed data to an S3 bucket for more permanent storage. This normalization step is necessary because the aggregation step that follows requires uniform timestamps.​</p>
+        <p>So the core logic of Normalizer.js groups the session metric data by time window. And a happy side effect of our normalization process is that we preserve statistical significance while minimizing data size.​</p>
+        <br/>
+        <h4>S3 Bucket</h4>
+        <br/>
         <figure>
-          <img src="assets/images/demo/29_tapestry_kickstart_computer.png" class="case-study-image-small">
+          <img src="assets/images/5-architecture/slide54.svg">
+          <figcaption>Fig. 5.7: Monsoon’s S3 bucket stores normalized test results data</figcaption>
         </figure>
-        <br />
-        <p>
-          Prior to execution, you will have to own or create accounts with Zoom, Salesforce, and Mailchimp. <code
-            class="command">kickstart</code> then begins by prompting you with a short series of questions about the
-          previously mentioned accounts, as well as Snowflake, Tapestry’s data warehouse of choice. Tapestry stores this
-          information in the AWS SSM Parameter store. This keeps sensitive data safe, but also accessible.
-        </p>
+        <br/>
+        <p>Now let's examine our destination S3 bucket more closely.</p>
+        <p>Once metrics sent by Normalizer.js start hitting the S3 bucket, the S3 bucket will contain files organized based on timestamp, end user action and Fargate instance name. For a given end user action, a single file represents the metrics for all virtual users on one Fargate instance within a single 15-second time window.</p>
+        <br/>
         <figure>
-          <img src="assets/images/demo/29_kickstart_questions_stars.gif">
-          <figcaption>Kickstart command prompts user for inputs.</figcaption>
+          <img src="assets/images/5-architecture/slide55.svg">
+          <figcaption>Fig. 5.8: Structure of one test result file</figcaption>
         </figure>
-        <br />
-        <p>
-          After your information has been collected, <code class="command">kickstart</code> continues by creating the
-          necessary databases and tables within your data warehouse to be utilized by both your ingestion and syncing
-          tools.
-        </p>
-        <br />
-        <p>
-          Let’s quickly review the infrastructure that this command is provisioning.
-        </p>
+        <br/>
+        <p>For example, in the figure above, the JSON file contains metrics from all 20 virtual users on the "mi_W8ni" Fargate instance for the "Click first link" action at the Unix timestamp listed.​</p>
+        <p>But even in this transformed state, the data currently sitting in the S3 bucket isn't appropriately formatted for a time series database. So we'll need another transformation step, this time involving an AWS Lambda function.​</p>
+        <br/>
+        <h4>Aggregating Lambda</h4>
+        <br/>
         <figure>
-          <img src="assets/images/demo/new_data_ingestion_v2.gif" class="large-image">
-          <figcaption>Data ingestion stack created during deployment.</figcaption>
+          <img src="assets/images/5-architecture/slide56.svg">
+          <figcaption>Fig. 5.9: Monsoon’s Aggregating Lambda</figcaption>
         </figure>
-        <br />
-        <p>
-          Tapestry uses the CloudFormation template supplied during the <code class="command">init</code> command to
-          create a CloudFormation stack, provisioning AWS resources specifically related to your ingestion tool,
-          Airbyte. These resources include an S3 staging bucket, an EC2 instance for Airbyte to run on, and an
-          Application Load Balancer to route traffic to our EC2 instance. Airbyte is then configured to extract certain
-          data from your Zoom and Salesforce accounts and send it over to your warehouse.
-        </p>
+        <br/>
+        <p>AWS Lambda is a serverless, event-driven compute service. It's similar to Fargate. But while Fargate runs entire apps in a serverless environment, Lambda runs individual serverless functions.​</p>
+        <p>Every three minutes, our Aggregating Lambda function polls the S3 bucket to determine if any new data has arrived. For each new timestamp, the lambda aggregates all the metrics in the JSON files with that timestamp, creating a single time series data point. Then we POST that data point to the time series database.</p>
+        <br/>
         <figure>
-          <img src="assets/images/demo/MISC_kickstart_airbyte_v2.gif">
-          <figcaption>Setup and provisioning of data ingestion stack from the command line.</figcaption>
+          <img src="assets/images/5-architecture/aggregation_process.gif">
+          <figcaption>Fig. 5.10: How metrics are aggregated by timestamp</figcaption>
         </figure>
-        <br />
-        <p>
-          You will then be asked to carry out a few steps so the data is transformed in your warehouse using the data
-          model Tapestry provides for DBT. The raw data will be aggregated from both sources into one transformed table,
-          filtered for duplicates, and appropriately formatted to be synced to Mailchimp.
-        </p>
-        <br />
+        <br/>
+        <h3>Storage</h3>
+        <br/>
         <figure>
-          <img src="assets/images/demo/dbt-run.PNG" class="case-study-image">
-          <figcaption>A successful DBT run, transforming data in the warehouse.</figcaption>
+          <img src="assets/images/5-architecture/slide58.svg">
+          <figcaption>Fig. 5.11: Monsoon’s Storage Component</figcaption>
         </figure>
-        <br />
-        <p>
-          To complete the pipeline, <code class="command">kickstart</code> creates another CloudFormation stack, this
-          time spinning up various AWS resources for your syncing tool, Grouparoo.
-        </p>
+        <br/>
+        <p>Now let's examine the Storage component of Monsoon's architecture. Its purpose is to appropriately store the data generated during the Transformation step.</p>
+        <p>As with any system, this data should be stored in a format that lends itself to the data's shape and access patterns. In Monsoon's case, a good fit is the time series data format.​</p>
+        <br/>
+        <h4>What is Time Series Data?</h4>
+        <br/>
+        <p>A <strong>time series</strong> is a series of data points that are ordered chronologically. They're excellent at tracking change over time. Examples include stock charts, ocean tidal charts and line charts in Excel.​</p>
+        <br/>
         <figure>
-          <img src="assets/images/demo/new_data_syncing.gif" class="large-image">
-          <figcaption>Data syncing stack created during deployment.</figcaption>
+          <img src="assets/images/5-architecture/slide59.svg">
+          <figcaption>Fig. 5.12: Time series data tracks change over time</figcaption>
         </figure>
-        <br />
-        <p>
-          These resources include an Elastic Container Services cluster to run your Grouparoo application, an Elastic
-          Container Registry repository with your Grouparoo Docker image stored, and another Application Load Balancer
-          to route network traffic to your cluster.
-        </p>
+        <br/>
+        <p>With Monsoon, we generate synthetic load on a website and track session metrics as the test progresses. End users are looking to track how key metrics like page load response times change over time. This type of data naturally lends itself to the time series format.</p>
+        <br/>
+        <h4>Which Time Series Database?</h4>
+        <br/>
+        <p>There are many time series database options available, but we chose to go with AWS Timestream. Timestream is a fast and scalable serverless time series database service that makes it easy to store and analyze trillions of events per day.​ Timestream can be up to 1000 times faster than a relational database and as little as 10% of the cost.​</p>
+        <p>Timestream is a database service, therefore users don't host Timestream themselves. Instead, they connect to the Timestream service, then create tables within the service. Each table contains one or more related time series.</p>
+        <br/>
         <figure>
-          <img src="assets/images/demo/kickstart-grouparoo_v3.gif">
-          <figcaption>Setup and provisioning of data syncing stack from the command line.</figcaption>
+          <img src="assets/images/5-architecture/slide61.svg">
+          <figcaption>Fig. 5.13: Records in Monsoon’s Timestream database</figcaption>
         </figure>
-        <br />
-        <h3>5.5 Tapestry Dashboard</h3>
-        <br />
-        <p>
-          If you are deploying a new pipeline, Tapestry automatically launches your very own local Tapestry Dashboard.
-          Additionally, anytime you'd like to view the dashboard, you can run the command <code
-            class="command">tapestry start-server</code> to spin up and launch the UI at http://localhost:7777.
-        </p>
+        <br/>
+        <p>As we mentioned in the Transformation section, data in our S3 bucket is aggregated by timestamp, then converted into a time series data format and written to Timestream. Because time series data is a first-class citizen in Timestream, the database can quickly and efficiently read and write time series data. An added benefit is that the data returned by a Timestream query is already in the shape we need to eventually display it.</p>
+        <br/>
+        <h3>Visualization</h3>
+        <br/>
         <figure>
-          <img src="assets/images/demo/tap_ui_home_v2.png">
+          <img src="assets/images/5-architecture/slide62.svg">
+          <figcaption>Fig. 5.14: Monsoon’s Visualization Component</figcaption>
         </figure>
-        <br />
-        <p>
-          The dashboard contains documentation for how to use Tapestry, along with various pages for each section of
-          your pipeline. Each page displays metrics that give you better insight into the health of each component. They
-          also include links to the UIs for all your date pipeline tools: Airbyte, Snowflake, DBT, and Grouparoo.
-        </p>
-        <br />
-        <figure>
-          <img src="assets/images/demo/tap_ui_carousel_v2.gif">
-        </figure>
-        <br />
-        <p>Some important metrics we track on the dashboard include:</p>
-        <ul>
-          <li>Number of data ingestion sources currently operational</li>
-          <li>Number of data syncing destinations currently operational</li>
-          <li>EC2 instance status</li>
-          <li>ECS cluster status</li>
-          <li>CPU utilization</li>
-          <li>List of source tables in the data warehouse</li>
-          <li>List of transformed tables created in the data warehouse</li>
-          <li>Logs for each tool for increased observability</li>
-        </ul>
-        <br />
-        <h3>5.6 Tapestry Data Flow</h3>
-        <br />
-        <p>
-          Now let’s actually see data flow through the entire pipeline with an example using the <code
-            class="command">tapestry kickstart</code> command.
-        </p>
-        <figure>
-          <img src="assets/images/demo/32_data_flow.png" class="case-study-image">
-          <figcaption>Flow of data with kickstart command.</figcaption>
-        </figure>
-        <br />
-        <p>
-          Our goal in this example is to extract data from both Zoom and Salesforce and push it to our data warehouse,
-          Snowflake. From there, we want to combine a list of webinar registrants from Zoom and Salesforce contacts into
-          one single table, and filter out any duplicates along the way. Finally, we want to send this complete set of
-          data over to Mailchimp.
-        </p>
-        <br />
-        <h4>Zoom Data</h4>
-        <figure>
-          <img src="assets/images/demo/33_zoom_source.png" class="case-study-image-small">
-          <figcaption>Source data from Zoom.</figcaption>
-        </figure>
-        <br />
-        <p>
-          As you can see from this table, we have several different people who have registered for a Zoom webinar. Of
-          particular note are Diana Prince, Barry Allen, and Betty Rubble. As indicated in blue, Betty Rubble is a
-          unique contact only found in Zoom, while the purple around Diana and Barry indicates that they are contacts
-          found in both Zoom and Salesforce. Our goal is to get all three of these entries over to Mailchimp, with only
-          one entry each for Diana and Barry.
-        </p>
-        <br />
-        <h4>Salesforce Data</h4>
-        <figure>
-          <img src="assets/images/demo/34_salesforce_source.png" class="large-image">
-          <figcaption>Source data from Salesforce.</figcaption>
-        </figure>
-        <br />
-        <p>
-          Now in Salesforce, we have a different list of customers. In yellow, there is a contact who is unique to
-          Salesforce, Jack Rogers, while Diana and Bartholomew, a.k.a. "Barry" are in purple again, as seen in the Zoom
-          list.
-        </p>
-        <br />
-        <p>
-          Even though Barry is going by a different first name in Salesforce, his email is the same across both sources,
-          allowing us to uniquely identify him. This means that when we combine the two lists, we can use the email
-          address field as a unique key to eliminate record duplication.
-        </p>
-        <br />
-        <h4>Snowflake Warehouse</h4>
-        <figure>
-          <img src="assets/images/demo/35_snowflake_warehouse.png">
-          <figcaption>Source data and transformed data in the warehouse.</figcaption>
-        </figure>
-        <br />
-        <p>
-          Once the data from both Zoom and Salesforce have made it into our Snowflake warehouse, we can transform the
-          data by combining both lists, and removing duplicate entries. You can see the two tables highlighted in
-          purple. The TAPESTRY_WEBINAR_REGISTRANTS table has all of our Zoom data, and the TAPESTRY_CONTACT table has
-          all of our Salesforce data. The EMAIL_MODEL table that is highlighted in blue is the newly transformed table
-          that we will sync to our Mailchimp account.
-        </p>
-        <br />
-        <h4>Mailchimp</h4>
-        <figure>
-          <img src="assets/images/demo/36_mailchimpdestination.png" class="large-image">
-          <figcaption>Synced data in Mailchimp destination.</figcaption>
-        </figure>
-        <br />
-        <p>
-          Finally, here in Mailchimp, we see that we’ve successfully synced all of our Zoom webinar registrants and
-          Salesforce contacts, and made sure that there is only one entry for Barry and Diana. You can also see that our
-          unique users, Betty and Jack made it over as well.
-        </p>
-        <br />
-        <h3>5.7 Maintenance & Management</h3>
-        <br />
-        <h4>Rebuild Command</h4>
-        <br />
-        <p>
-          Tapestry also supplies users with a <code class="command">tapestry rebuild</code> command that is specific to
-          the syncing side of the pipeline. While most updates to Airbyte can be done right in their UI, Grouparoo’s
-          dashboard is mainly for application visibility and observability. In order to add, remove, or update any
-          sources or destinations, changes need to be made to the configuration files in your local Grouparoo directory.
-        </p>
-        <br />
-        <p>
-          Once these changes are finalized locally, the image must be rebuilt, pushed to a private repository in the
-          Elastic Container Registry, and the Grouparoo CloudFormation stack must be updated. All of these steps are
-          what Tapestry’s <code class="command">rebuild</code> command automates. The user simply makes the changes
-          themselves to the configuration files and then runs <code class="command">tapestry rebuild</code>. Tapestry
-          handles the rest.
-        </p>
-        <figure>
-          <img src="assets/images/demo/ECR_only.png" class="case-study-image-small">
-          <figcaption>Updated Docker image is pushed to ECR.</figcaption>
-        </figure>
-        <br>
-        <h4>Teardown Command</h4>
-        <br>
-        <p>
-          If the user, for whatever reason, decides they are no longer in need of Tapestry’s data pipeline, Tapestry
-          provides <code class="command">tapestry teardown</code> to terminate and remove most of the AWS resources
-          provisioned during deployment, as well as the Airbyte and Grouparoo applications that ran on those resources.
-        </p>
-        <br />
-        <p>
-          We say “most” AWS resources because we do not destroy your S3 bucket, nor do we destory any parameters in your
-          AWS SSM Parameter Store. Tapestry uses the Parameter Store to store user inputs, such as API keys and various
-          account credentials. These resources remain intact so that you can retain access to this data even after your
-          pipeline has been torn down.
-        </p>
-        <br />
-        <figure>
-          <img src="assets/images/demo/MISC_teardown_v2.gif">
-          <figcaption>Running <em>tapestry teardown</em> from the command line.</figcaption>
-        </figure>
-        <br />
+        <br/>
+        <p>Visualization is Monsoon's final architectural component. The Visualization architecture queries the Storage layer, then displays the data it retrieves in a graphical user interface.</p>
+        <p>We call our dashboard Weather Channel. It's a locally-hosted React app that directly queries the Timestream database service. This dashboard app uses the Victory library for modular charting and data visualization, as Victory has native support for time series data. We’ll show Weather Channel in action later in this case study.</p>
+        <br/>
         <!--Section 6-->
         <h2>6 Implementation Challenges</h2>
         <br />
