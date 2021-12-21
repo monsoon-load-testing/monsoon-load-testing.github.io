@@ -1188,7 +1188,7 @@ a:hover {
 
 .hero-image-right {
   position: relative;
-  right: 130px;
+  right: 170px;
   width: 710px;
 }
 
@@ -2065,4 +2065,28 @@ iframe {
 .references {
   color: #916cbf;
   font-size: 13px;
+}
+
+.item-container {
+  display: flex;
+  justify-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.item-box {
+  margin-bottom: 10px;
+  background-color: #E5EEFA;
+  max-width: 500px;
+  border-radius: 7px;
+}
+
+.item-header > img {
+  max-width: 100px;
+  min-width: 100px;
+  display: inline-block;
+}
+
+.item-content {
+  padding: 25px;
 }
