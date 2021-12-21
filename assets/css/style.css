@@ -2069,10 +2069,11 @@ iframe {
 }
 
 .item-box {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   background-color: #E5EEFA;
-  max-width: 500px;
+  max-width: 375px;
   border-radius: 7px;
+  max-height: 270px;
 }
 
 .item-header > img {
