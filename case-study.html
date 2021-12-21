@@ -114,7 +114,7 @@
         <br />
         <figure>
           <img src="assets/images/1-introduction/demo.gif" id="case-study" alt="">
-          <figcaption>Fig 1.1: Monsoon front-end dashboard demo.</figcaption>
+          <figcaption>Fig 1.1: Monsoon's dashboard.</figcaption>
         </figure>
         <br />
         <p>
@@ -130,13 +130,17 @@
           Boost is a rapidly-growing startup in the health and wellness space.
         </p>
         <br />
+        <figure>
+          <img src="assets/images/1-introduction/boost_team.svg" class="case-study-image" alt="">
+          <figcaption>Fig 1.1: The Team.</figcaption>
+        </figure>
         <p>
           The stakes are high. Boost’s marketing team has spent months planning the product launch for its new Brain Boost supplement. 
           It’s Boost’s biggest product launch ever, and business executives want to close new rounds of venture capital funding based on the success of Brain Boost. 
         </p>
         <br />
         <figure>
-          <img src="assets/images/1-introduction/brain.svg" class="case-study-image-small" alt="">
+          <img src="assets/images/1-introduction/brain.svg" class="case-study-image-x-small" alt="">
           <figcaption>Fig 1.2: Going all in on Brain Boost.</figcaption>
         </figure>
         <br />
@@ -157,6 +161,10 @@
           The content of the single page is just repeatedly updated on the fly using browser-side JavaScript.
         </p>
         <br />
+        <figure>
+          <img src="assets/images/1-introduction/SPA_benefits.svg" class="case-study-image-large" alt="">
+          <figcaption>Fig 1.3: SPA Benefits.</figcaption>
+        </figure>
         <p>
           SPAs have some significant advantages over more traditional websites:
         </p>
@@ -182,7 +190,7 @@
         <br />
         <figure>
           <img src="assets/images/1-introduction/protocol-based-load-testing.gif" class="case-study-image-large">
-          <figcaption>Fig 1.3: Protocol-based load testing</figcaption>
+          <figcaption>Fig 1.4: Protocol-based load testing</figcaption>
         </figure>
         <p>
           JMeter is categorized as a protocol-based load testing tool. Protocol-based load tests are the original type of load test. 
@@ -191,13 +199,25 @@
         </p>
         <br />
         <p>
-          This is clearly a great deal of work for the team. On top of this, JMeter is a complex tool and the learning curve is steep. 
-          The team settles in for many painful days of work ahead. 
+          The Boost Health engineers want to test a customer adding Brain Boost to her cart, a process that breaks down into 3 different actions:
+        </p>
+        <ol>
+          <li>Go to the Boost Health Main Page</li>
+          <li>View the Brain Boost product details</li>
+          <li>Add Brain Boost to the cart</li>
+        </ol>
+        <br/>
+        <figure>
+          <img src="assets/images/1-introduction/3actions_125requests.gif" class="case-study-image-large">
+          <figcaption>Fig 1.5: Bye bye weekend.</figcaption>
+        </figure>
+        <p>
+          To simulate this workflow, the Boost engineers need to program JMeter to send 125 different HTTP requests in the correct order. This is clearly a great deal of work for the team. On top of this, JMeter is a complex tool and the learning curve is steep. The team settles in for many painful days of work ahead. 
         </p>
         <br />
         <figure>
           <img src="assets/images/1-introduction/unhappydev-jmeter.svg" class="case-study-image">
-          <figcaption>Fig 1.4: Protocol-based load testing can be painful.</figcaption>
+          <figcaption>Fig 1.6: Protocol-based load testing can be painful.</figcaption>
         </figure>
         <br />
         <p>
@@ -234,10 +254,13 @@
         </p>
         <br />
         <p>
-          Returning to Selenium, it's a suite of browser-based test automation tools. 
-          It was never actually designed for load testing, but that's how Selenium came to be used by many developers.
+          Returning to Selenium, it's a suite of browser-based test automation tools. It was never actually designed for load testing, but that's how Selenium came to be used by many developers. With Selenium, the Boost engineers don't need to worry about HTTP requests anymore. All they need to do is script their 3 end user actions.​
         </p>
         <br />
+        <figure>
+          <img src="assets/images/1-introduction/3actions_3actions.gif" class="case-study-image-large">
+          <figcaption>Fig 1.7: Ok, that's better.</figcaption>
+        </figure>
         <p> 
           The team runs their first browser-based load test using Selenium. 
           It’s a fairly small-scale test simulating 5 users concurrently visiting the Boost Health website. This test goes off without a hitch. 
@@ -250,7 +273,7 @@
         <br />
         <figure>
           <img src="assets/images/1-introduction/unhappydev-selenium.svg" class="case-study-image">
-          <figcaption>Fig 1.5: Local browser-based load testing doesn’t cut it.</figcaption>
+          <figcaption>Fig 1.8: Local browser-based load testing doesn’t cut it.</figcaption>
         </figure>
         <br />
         <p>
@@ -266,7 +289,7 @@
         </p>
         <figure>
           <img src="assets/images/1-introduction/unhappydev-flood.svg" class="case-study-image">
-          <figcaption>Fig 1.6: Flood gets the job done but costs too much.</figcaption>
+          <figcaption>Fig 1.9: Flood gets the job done but costs too much.</figcaption>
         </figure>
         <br />
         <h4>The Journey So Far</h4>
@@ -381,7 +404,7 @@
         </p>
         <br/>
         <figure>
-          <img src="assets/images/2-overview/metrics.svg" class="case-study-image-large" alt="">
+          <img src="assets/images/2-overview/metrics.svg" class="case-study-image-full" alt="">
           <figcaption>Fig. 2.10: Weather Channel gives you insight into the performance of your app</figcaption>
         </figure>
         <br/>
