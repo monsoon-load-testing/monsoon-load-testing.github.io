@@ -361,6 +361,19 @@ label {
     width: 100%;
     margin: 0px auto;
   }
+  div.item-container {
+    justify-content: space-evenly;
+  }
+  /* div.item-box {
+    margin-bottom: 20px;
+    background-color: #e5eefa;
+    max-width: none;
+    width: 100%;
+    flex: auto auto 100%;
+    min-width: 270px;
+    border-radius: 30px;
+    max-height: 450px;
+  } */
 }
 
 @media screen and (max-width: 767px) {
@@ -2101,15 +2114,18 @@ iframe {
   justify-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
+  gap: 20px;
 }
 
 .item-box {
   margin-bottom: 20px;
   background-color: #e5eefa;
   max-width: 285px;
+  flex: 1 1 0;
+  min-width: 270px;
   border-radius: 30px;
-  max-height: 400px;
-  height: 335px;
+  max-height: 450px;
+  /* height: 335px; */
 }
 
 #header-cloud {
