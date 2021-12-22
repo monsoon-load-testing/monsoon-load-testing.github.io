@@ -2082,9 +2082,10 @@ iframe {
   margin-bottom: 20px;
   background-color: #e5eefa;
   max-width: 285px;
-  border-radius: 100px;
+  border-radius: 30px;
   max-height: 400px;
-  height: 340px;
+  height: 310px;
+  /* height: 340px */
 }
 
 .item-header {
