@@ -2185,3 +2185,7 @@ iframe {
   margin-bottom: 60px;
   padding: 0 60px;
 }
+
+.tab-image-wrap > img {
+  width: 100%;
+}
