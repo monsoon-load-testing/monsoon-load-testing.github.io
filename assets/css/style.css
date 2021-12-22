@@ -1136,6 +1136,26 @@ a:hover {
   grid-template-rows: auto;
 }
 
+/* .tab-text-wrap {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: start;
+  -webkit-justify-content: start;
+  -ms-flex-pack: start;
+  justify-content: start;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+} */
+
 .tab-text-wrap {
   display: -webkit-box;
   display: -webkit-flex;
@@ -1184,16 +1204,19 @@ a:hover {
 .hero-image-left {
   position: relative;
   left: 80px;
+  /* left: 900px; */
   right: auto;
   bottom: -140px;
   z-index: 2;
   width: 377px;
+  border-radius: 10px;
 }
 
 .hero-image-right {
   position: relative;
   right: 170px;
   width: 710px;
+  border-radius: 10px;
 }
 
 .primary-button {
@@ -1403,7 +1426,7 @@ a:hover {
 }
 
 .brand {
-  max-width: 70px;
+  max-width: 120px;
 }
 
 .navigation-right {
@@ -1523,10 +1546,12 @@ a:hover {
 
 @media screen and (min-width: 1280px) {
   .hero-image-left {
-    width: 403px;
+    /* width: 403px; */
+    width: 500px;
   }
   .hero-image-right {
-    width: 760px;
+    /* width: 760px; */
+    width: 850px;
   }
 }
 
@@ -2084,8 +2109,18 @@ iframe {
   max-width: 285px;
   border-radius: 30px;
   max-height: 400px;
-  height: 310px;
-  /* height: 340px */
+  height: 335px;
+}
+
+#header-cloud {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 11px;
+}
+
+#header-cloud > h5 {
+  margin: 0;
 }
 
 .item-header {
@@ -2096,9 +2131,14 @@ iframe {
 }
 
 .item-header > img {
-  max-width: 75px;
-  min-width: 75px;
+  /* max-width: 85px;
+  min-width: 85px; */
+  width: 85px;
   display: inline-block;
+}
+
+#img-cloud {
+  width: 110px;
 }
 
 .item-content {
@@ -2112,4 +2152,36 @@ iframe {
 
 #sc-photo-case-study {
   height: 178px;
+}
+
+.tab-image-wrap {
+  display: flex;
+  justify-content: end;
+}
+
+/* .tab-image-wrap > div {
+  background-color: #1d0d5c;
+  width: 450px;
+  height: 450px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  border-radius: 60px;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  padding: 40px;
+} */
+
+.tab-image-wrap > div {
+  /* background-color: #1d0d5c; */
+  /* width: 450px;
+  height: 450px; */
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  border-radius: 60px;
+  /* margin-top: 20px; */
+  margin-bottom: 60px;
+  padding: 0 60px;
 }
