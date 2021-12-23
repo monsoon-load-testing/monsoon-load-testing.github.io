@@ -559,7 +559,7 @@
         <br/>
         <p>The purpose of our load generation architecture is to create a given number of virtual users, have them perform scripted actions on the target website or web app, and record metrics about those actions.​</p>
         <br/>
-        <h3>Load Generation</h3>
+        <h3>5.1 Load Generation</h3>
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide44.svg">
@@ -600,7 +600,7 @@
         <p>For every block of 20 virtual users we wish to simulate, ECS spins up an additional Fargate instance to execute our containerized Node app.​ For example, to simulate 4000 users, ECS spins up 200 Fargate instances, each of which each of which executes one instance of our containerized app.​</p>
         <p>So now that our load generation process has yielded session data for our virtual users, what do we do with it?</p>
         <br/>
-        <h3>Transformation</h3>
+        <h3>5.2 Transformation</h3>
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide51.svg">
@@ -637,6 +637,27 @@
         </figure>
         <br/>
         <p>Now let's examine our destination S3 bucket more closely.</p>
+        <p>
+          The data processed by Normalizer.js is saved in an S3 bucket. AWS Simple Storage Service (AWS S3) is a serverless and highly scalable object storage service. We temporarily stage the data in S3 for two reasons:
+        </p>
+        <br/>
+        <ol>
+          <li>
+            <p>
+              It serves as temporary storage for the normalized test results. For any given action and timestamp, data can't be aggregated until the metrics of all virtual users have been normalized. We use the S3 bucket to stage these results until the Transformation engine has all the files needed to start the aggregation process; and
+            </p>
+          </li>
+          <li>
+            <p>
+              It decouples the Transformation process from the Load Generation process. A test with thousands of users can generate such a massive amount of data that it overwhelms the Transformation component. The S3 bucket then acts as a dam, stopping the flood of data and allowing the Transformation engine to process the data at its own pace.
+            </p>
+          </li>
+        </ol>
+        <br/>
+        <figure>
+          <img src="assets/images/5-architecture/s3_dam.svg" class="case-study-image-large">
+          <figcaption>Fig. 5.8: Monsoon’s S3 Bucket decouples Transformation from Load Generation</figcaption>
+        </figure>
         <p>Once metrics sent by Normalizer.js start hitting the S3 bucket, the S3 bucket will contain files organized based on timestamp, end user action and Fargate instance name. For a given end user action, a single file represents the metrics for all virtual users on one Fargate instance within a single 15-second time window.</p>
         <br/>
         <figure>
@@ -662,7 +683,7 @@
           <figcaption>Fig. 5.10: How metrics are aggregated by timestamp</figcaption>
         </figure>
         <br/>
-        <h3>Storage</h3>
+        <h3>5.3 Storage</h3>
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide58.svg">
@@ -695,7 +716,7 @@
         <br/>
         <p>As we mentioned in the Transformation section, data in our S3 bucket is aggregated by timestamp, then converted into a time series data format and written to Timestream. Because time series data is a first-class citizen in Timestream, the database can quickly and efficiently read and write time series data. An added benefit is that the data returned by a Timestream query is already in the shape we need to eventually display it.</p>
         <br/>
-        <h3>Visualization</h3>
+        <h3>5.4 Visualization</h3>
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide62.svg">
