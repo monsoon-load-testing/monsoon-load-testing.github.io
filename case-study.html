@@ -680,7 +680,7 @@
           High level, every one minute, our Aggregating Lambda function polls the S3 bucket to determine if any new data has arrived. For each new timestamp, the lambda aggregates all the metrics in the JSON files with that timestamp, creating a single time series data point. Then we POST that data point to the time series database.
         </p>
         <figure>
-          <img src="assets/images/5-architecture/aggregation_process.gif">
+          <img src="assets/images/5-architecture/aggregation_process.gif" class="case-study-image">
           <figcaption>Fig. 5.10: How metrics are aggregated by timestamp</figcaption>
         </figure>
         <br/>
@@ -692,11 +692,15 @@
           This timestamp processing is batched. Every 1 minute, events are fired - one event per ready timestamp. For each of these events, a new Aggregating Lambda instance is spun up. The mechanism needed to generate these events is complex and requires the assistance of another lambda, playing the role of orchestrator. We call this the Metronome Lambda, and we’ll discuss it more in section 7.2 below.
         </p>
         <br/>
+        <figure>
+          <img src="assets/images/5-architecture/metronone_lambda_presentation.svg" class="case-study-image-large">
+          <figcaption>Fig. 5.11: The Metronome Lambda orchestrates the transformation process.</figcaption>
+        </figure>
         <h3>5.3 Storage</h3>
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide58.svg">
-          <figcaption>Fig. 5.11: Monsoon’s Storage Component</figcaption>
+          <figcaption>Fig. 5.12: Monsoon’s Storage Component</figcaption>
         </figure>
         <br/>
         <p>Now let's examine the Storage component of Monsoon's architecture. Its purpose is to appropriately store the data generated during the Transformation step.</p>
@@ -708,7 +712,7 @@
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide59.svg">
-          <figcaption>Fig. 5.12: Time series data tracks change over time</figcaption>
+          <figcaption>Fig. 5.13: Time series data tracks change over time</figcaption>
         </figure>
         <br/>
         <p>With Monsoon, we generate synthetic load on a website and track session metrics as the test progresses. End users are looking to track how key metrics like page load response times change over time. This type of data naturally lends itself to the time series format.</p>
@@ -720,7 +724,7 @@
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide61.svg">
-          <figcaption>Fig. 5.13: Records in Monsoon’s Timestream database</figcaption>
+          <figcaption>Fig. 5.14: Records in Monsoon’s Timestream database</figcaption>
         </figure>
         <br/>
         <p>As we mentioned in the Transformation section, data in our S3 bucket is aggregated by timestamp, then converted into a time series data format and written to Timestream. Because time series data is a first-class citizen in Timestream, the database can quickly and efficiently read and write time series data. An added benefit is that the data returned by a Timestream query is already in the shape we need to eventually display it.</p>
@@ -729,7 +733,7 @@
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide62.svg">
-          <figcaption>Fig. 5.14: Monsoon’s Visualization Component</figcaption>
+          <figcaption>Fig. 5.15: Monsoon’s Visualization Component</figcaption>
         </figure>
         <br/>
         <p>Visualization is Monsoon's final architectural component. The Visualization architecture queries the Storage layer, then displays the data it retrieves in a graphical user interface.</p>
@@ -942,7 +946,7 @@
         <br />
         <figure>
           <img src="assets/images/7-challenges/timestream.gif" class="case-study-image-full">
-          <figcaption>Fig 7.4: A new Lambda ensures we move data from S3 to Timestream in a timely fashion.</figcaption>
+          <figcaption>Fig 7.4: The Metronome Lambda ensures we move data from S3 to Timestream in a timely fashion.</figcaption>
         </figure>
         <br/>
         <p>
@@ -974,7 +978,7 @@
           </p></li>
           <li>
             <p>
-              The Metronome Lambda fires an event for each action and expired timestamp, triggering as many Aggregating Lambda invocations as events generated. For example, if the Metronome Lambda finds 4 timestamps have expired for a test with 3 user actions, it fires 12 events that then trigger 12 concurrent Aggregating Lambda invocations. The Aggregating Lambda instances then aggregate the data and save it to Timestream.
+              The Metronome Lambda fires an event for each action and expired timestamp, triggering as many Aggregating Lambda invocations as events generated. For example, if the Metronome Lambda finds 2 timestamps have expired for a test with 3 user actions, it fires 6 events that then trigger 6 concurrent Aggregating Lambda invocations. The Aggregating Lambda instances then aggregate the data and save it to Timestream.
             </p>
           </li>
           <li>
@@ -983,6 +987,11 @@
             </p>
           </li>
         </ol>
+        <br/>
+        <figure>
+          <img src="assets/images/7-challenges/metronome lambda.gif" class="case-study-image-full">
+          <figcaption>Fig 7.5: The Metronome Lambda in action.</figcaption>
+        </figure>
         <p>
           After solving this third timing issue, we had a working data pipeline capable of moving raw test ​
           result data from containers to an S3 bucket and then to the database, performing transformations along the way.     
