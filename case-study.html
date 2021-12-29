@@ -676,12 +676,21 @@
         </figure>
         <br/>
         <p>AWS Lambda is a serverless, event-driven compute service. It's similar to Fargate. But while Fargate runs entire apps in a serverless environment, Lambda runs individual serverless functions.​</p>
-        <p>Every three minutes, our Aggregating Lambda function polls the S3 bucket to determine if any new data has arrived. For each new timestamp, the lambda aggregates all the metrics in the JSON files with that timestamp, creating a single time series data point. Then we POST that data point to the time series database.</p>
-        <br/>
+        <p>
+          High level, every one minute, our Aggregating Lambda function polls the S3 bucket to determine if any new data has arrived. For each new timestamp, the lambda aggregates all the metrics in the JSON files with that timestamp, creating a single time series data point. Then we POST that data point to the time series database.
+        </p>
         <figure>
           <img src="assets/images/5-architecture/aggregation_process.gif">
           <figcaption>Fig. 5.10: How metrics are aggregated by timestamp</figcaption>
         </figure>
+        <br/>
+        <p>
+          But let’s clarify this high-level summary a bit. A given timestamp is ready to be processed 3 minutes after its creation. Processing begins by spinning up an instance of the Aggregating Lambda. That lambda grabs all JSON files from the S3 bucket whose timestamp matches the given timestamp and aggregates all those metrics into a single time series data point. The lambda then POSTs that data point to the time series database.
+        </p>
+        <br/>
+        <p>
+          This timestamp processing is batched. Every 1 minute, events are fired - one event per ready timestamp. For each of these events, a new Aggregating Lambda instance is spun up. The mechanism needed to generate these events is complex and requires the assistance of another lambda, playing the role of orchestrator. We call this the Metronome Lambda, and we’ll discuss it more in section 7.2 below.
+        </p>
         <br/>
         <h3>5.3 Storage</h3>
         <br/>
@@ -743,7 +752,7 @@
           This creates a new <code>monsoon_tests</code> subdirectory inside your current working directory. You'll need to <code>cd</code> into <code>monsoon_tests</code>, and be sure to execute all of the other Monsoon CLI subcommands, from within <code>monsoon_tests</code>.
         </p>
         <figure>
-          <img src="assets/images/6-install_use_monsoon/init.gif" class="case-study-image">
+          <img src="assets/images/6-install_use_monsoon/init.gif" class="case-study-image-full">
           <figcaption>Fig 6.2: The <code>monsoon init</code> command.</figcaption>
         </figure>
         <br />
@@ -753,7 +762,7 @@
           functions, an S3 bucket and a Timestream database.
         </p>
         <figure>
-          <img src="assets/images/6-install_use_monsoon/deploy.gif" class="case-study-image">
+          <img src="assets/images/6-install_use_monsoon/deploy.gif" class="case-study-image-full">
           <figcaption>Fig 6.3: The <code>monsoon deploy</code> command.</figcaption>
         </figure>
         <br />
@@ -766,7 +775,7 @@
         </p>
         <br />
         <figure>
-          <img src="assets/images/6-install_use_monsoon/newtest.gif" class="case-study-image">
+          <img src="assets/images/6-install_use_monsoon/newtest.gif" class="case-study-image-full">
           <figcaption>Fig 6.4: The <code>monsoon new-test</code> command.</figcaption>
         </figure>
         <br />
@@ -790,7 +799,7 @@
           This officially kicks off your load test and provides a bit of light reading while you wait.
         </p>
         <figure>
-          <img src="assets/images/6-install_use_monsoon/start.gif" class="case-study-image">
+          <img src="assets/images/6-install_use_monsoon/start.gif" class="case-study-image-full">
           <figcaption>Fig 6.7: The <code>monsoon start</code> command.</figcaption>
         </figure>
         <br /> 
@@ -801,7 +810,7 @@
         </p>
         <br />
         <figure>
-          <img src="assets/images/6-install_use_monsoon/weather.gif" class="case-study-image">
+          <img src="assets/images/6-install_use_monsoon/weather.gif" class="case-study-image-full">
           <figcaption>Fig 6.8: The <code>monsoon weather-channel</code> command.</figcaption>
         </figure>
         <br />
@@ -819,7 +828,7 @@
         </p>
         <br />
         <figure>
-          <img src="assets/images/6-install_use_monsoon/dashboard_demo.gif" class="case-study">
+          <img src="assets/images/6-install_use_monsoon/dashboard_demo.gif" class="case-study-image-full">
           <figcaption>Fig 6.9: A demo of monsoon dashboard <code>weather-channel</code>.</figcaption>
         </figure>
         <br />
@@ -831,7 +840,7 @@
         </p>
         <br />
         <figure>
-          <img src="assets/images/6-install_use_monsoon/teardown.gif" class="case-study-image">
+          <img src="assets/images/6-install_use_monsoon/teardown.gif" class="case-study-image-full">
           <figcaption>Fig 6.10: The <code>monsoon teardown</code> and <code>monsoon destroy</code> commands.</figcaption>
         </figure>
         <br />
@@ -868,7 +877,7 @@
         </p>
         <br />
         <figure>
-          <img src="assets/images/7-challenges/response_time.svg" class="case-study">
+          <img src="assets/images/7-challenges/response_time.svg" class="case-study-image">
           <figcaption>Fig 7.1: Which definition of “response time” is most useful to engineers?</figcaption>
         </figure>
         <br />
@@ -891,7 +900,7 @@
         </p>
         <br />
         <figure>
-          <img src="assets/images/7-challenges/waiting_time.gif" class="case-study">
+          <img src="assets/images/7-challenges/waiting_time.gif" class="case-study-image-large">
           <figcaption>Fig 7.2: A waiting time ensures all virtual users hit the website at once.</figcaption>
         </figure>
         <br />
@@ -916,7 +925,7 @@
         </p>
         <br />
         <figure>
-          <img src="assets/images/7-challenges/polling.gif" class="case-study">
+          <img src="assets/images/7-challenges/polling.gif" class="case-study-image-full">
           <figcaption>Fig 7.3: Polling lets data keep moving through our pipeline.</figcaption>
         </figure>
         <br />
@@ -928,15 +937,52 @@
         </p>
         <br />
         <p>
-          We handled this by creating an EventBridge rule to invoke our Metronome Lambda once every ​
-          minute. The Metronome Lambda checks a collection of pre-generated timestamps to ​
-          see if any have expired. If any have, the Metronome Lambda invokes the Aggregating Lambda, which gathers the new batch of data and sends it to Timestream.​
+          High level, we handled this by creating an EventBridge rule to invoke our Metronome Lambda once every ​minute. The Metronome Lambda checks a collection of pre-generated timestamps to ​see if any have expired. If any have, the Metronome Lambda invokes the Aggregating Lambda, which gathers the new batch of data and sends it to Timestream.​
         </p>
         <br />
         <figure>
-          <img src="assets/images/7-challenges/timestream.gif" class="case-study">
+          <img src="assets/images/7-challenges/timestream.gif" class="case-study-image-full">
           <figcaption>Fig 7.4: A new Lambda ensures we move data from S3 to Timestream in a timely fashion.</figcaption>
         </figure>
+        <br/>
+        <p>
+          Let’s examine this in greater detail.
+        </p>
+        <br/>
+        <p>
+          The Aggregating Lambda's only concern is aggregating the normalized test results and saving them to Timestream. The Aggregating Lambda needs to wait until all the test results for a given timestamp are stored in the S3 bucket. Since each Load Generation Fargate instance simulates 20 virtual users, for a test of 4000 users, we expect the Aggregating Lambda to process 200 normalized JSON files for each timestamp/end user action pair.
+        </p>
+        <br/>
+        <p>
+          However, how does the Aggregating Lambda know when these 200 files are ready to be processed? And more importantly, what if AWS has a server issue and 10 of the 200 Fargate instances never get spun up? Will the lambda be waiting forever for those 10 missing JSON files? The reality is that the Aggregating Lambda has no way of knowing when files are ready to be processed. It needs assistance from another lambda, the Metronome Lambda.
+        </p>
+        <br/>
+        <p>
+          The Metronome Lambda’s objective is to orchestrate and set the pace of the transformation process. The Metronome Lambda is controlled by an EventBridge rule that triggers the lambda every 1 minute. Amazon EventBridge is a serverless event bus used to build event-driven applications.
+        </p>
+        <br/>
+        <p>
+          Let's see this process in more detail:
+        </p>
+        <br/>
+        <ol>
+          <li><p>
+            Every minute, the Metronome Lambda retrieves a file called timestamps.json from the S3 bucket. This file contains a collection of pre-generated normalized timestamps.
+          </p></li>
+          <li><p>
+            Then the Metronome Lambda goes over this array of timestamps, filtering out all the timestamps that have “expired”. A timestamp is considered expired if more than 3 minutes have passed since the timestamp was created.
+          </p></li>
+          <li>
+            <p>
+              The Metronome Lambda fires an event for each action and expired timestamp, triggering as many Aggregating Lambda invocations as events generated. For example, if the Metronome Lambda finds 4 timestamps have expired for a test with 3 user actions, it fires 12 events that then trigger 12 concurrent Aggregating Lambda invocations. The Aggregating Lambda instances then aggregate the data and save it to Timestream.
+            </p>
+          </li>
+          <li>
+            <p>
+              Finally, the Metronome Lambda returns the modified timestamps.json file to the S3 bucket. This process will be repeated until there are no more timestamps left in the timestamp.json file.
+            </p>
+          </li>
+        </ol>
         <p>
           After solving this third timing issue, we had a working data pipeline capable of moving raw test ​
           result data from containers to an S3 bucket and then to the database, performing transformations along the way.     
@@ -969,37 +1015,44 @@
         <!-- Section 9 -->
         <h2>9 References</h2>
 
-        <p><strong>Modern Data Pipeline:</strong></p>
+        <p><strong>Books</strong></p>
         <ul>
-          <li><a href="https://hevodata.com/blog/cloud-data-warehouse-101/" class="references">History of the Cloud Data
-              Warehouse</a></li>
-          <li><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/"
-              class="references">Emerging Architectures for Modern Data Infrastructure</a></li>
-          <li><a href="https://rudderstack.com/blog/the-complete-customer-data-stack" class="references">The Complete
-              Customer Data Stack</a></li>
-          <li><a href="https://dataled.academy/guides/modern-data-stack-for-growth/" class="references">Modern Data
-              Stack for Growth</a></li>
+          <li><a href="https://www.amazon.com/Hitchhiking-Guide-Testing-Projects-Step/dp/0988540207" class="references">The Hitchhiking Guide To Load Testing Projects by Leandro Melendez</a></li>
+          <li><a href="https://www.oreilly.com/library/view/data-pipelines-pocket/9781492087823/"
+              class="references">O’Reilly’s Data Pipelines Pocket Reference by James Densmore</a></li>
+          <li><a href="https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/" class="references">O’Reilly’s Designing Data-Intensive Applications by Martin Kleppmann</a></li>
         </ul>
-        <p><strong>Data Silos:</strong></p>
+        <p><strong>Articles</strong></p>
         <ul>
-          <li><a
-              href="https://rudderstack.com/blog/heres-why-the-cloud-tools-used-by-marketing-sales-and-product-create-data-silos"
-              class="references">Why Cloud Tools Create Data Silos</a></li>
+          <li>
+            <a
+              href="https://addyosmani.com/blog/puppeteer-recipes/"
+              class="references">Web Performance Recipes for Puppeteer by Addy Osmani
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://aws.amazon.com/solutions/implementations/distributed-load-testing-on-aws/"
+              class="references">AWS Distributed Load Testing Guide
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://machinelearningmastery.com/moving-average-smoothing-for-time-series-forecasting-python/"
+              class="references">Moving Average Smoothing for Data Preparation and Time Series Forecasting in Python by Jason Brownlee, PhD
+            </a>
+          </li>
         </ul>
-        <p><strong>Reverse ETL/Syncing:</strong></p>
+        <p><strong>Podcasts</strong></p>
         <ul>
-          <li><a href="https://medium.com/memory-leak/reverse-etl-a-primer-4e6694dcc7fb" class="references">Reverse ETL,
-              A Primer</a></li>
-          <li><a href="https://www.grouparoo.com/solutions/reverse-etl" class="references">Reverse ETL</a></li>
-          <li><a href="https://hightouch.io/customers/zeplin/" class="references">Reverse ETL Case Study</a></li>
+          <li><a href="https://softwareengineeringdaily.com/2018/02/08/load-testing-mobile-applications-with-paulo-costa-and-rodrigo-coutinho/" class="references">Software Engineering Daily, February 8, 2018</a></li>
+          <li><a href="https://softwareengineeringdaily.com/2017/03/08/load-testing-with-mark-gilbert/" class="references">Software Engineering Daily, March 8, 2017</a></li>
         </ul>
         <p><strong>Companies:</strong></p>
         <ul>
-          <li><a href="https://airbyte.io/" class="references">Airbyte</a></li>
-          <li><a href="https://www.grouparoo.com/" class="references">Grouparoo</a></li>
-          <li><a href="https://www.snowflake.com/" class="references">Snowflake</a></li>
-          <li> <a href="https://www.getdbt.com/" class="references">DBT</a></li>
-          <li><a href="https://rudderstack.com/" class="references">Rudderstack</a></li>
+          <li><a href="https://www.flood.io" class="references">Flood</a></li>
+          <li><a href="https://www.loadview-testing.com" class="references">loadview</a></li>
+          <li><a href="https://loadninja.com" class="references">LoadNinja</a></li>
         </ul>
         <br>
         <h2>Presentation</h2>
