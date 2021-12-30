@@ -638,7 +638,7 @@
         <br/>
         <p>Now let's examine our destination S3 bucket more closely.</p>
         <p>
-          The data processed by Normalizer.js is saved in an S3 bucket. AWS Simple Storage Service (AWS S3) is a serverless and highly scalable object storage service. We temporarily stage the data in S3 for two reasons:
+          The data processed by <code>Normalizer.js</code> is saved in an S3 bucket. AWS Simple Storage Service (AWS S3) is a serverless and highly scalable object storage service. We temporarily stage the data in S3 for two reasons:
         </p>
         <br/>
         <ol>
@@ -658,7 +658,7 @@
           <img src="assets/images/5-architecture/s3_dam.svg" class="case-study-image-large">
           <figcaption>Fig. 5.8: Monsoon’s S3 Bucket decouples Transformation from Load Generation</figcaption>
         </figure>
-        <p>Once metrics sent by Normalizer.js start hitting the S3 bucket, the S3 bucket will contain files organized based on timestamp, end user action and Fargate instance name. For a given end user action, a single file represents the metrics for all virtual users on one Fargate instance within a single 15-second time window.</p>
+        <p>Once metrics sent by <code>Normalizer.js</code> start hitting the S3 bucket, the S3 bucket will contain files organized based on timestamp, end user action and Fargate instance name. For a given end user action, a single file represents the metrics for all virtual users on one Fargate instance within a single 15-second time window.</p>
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide55.svg">
