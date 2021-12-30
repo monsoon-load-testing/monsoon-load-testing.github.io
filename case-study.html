@@ -619,15 +619,15 @@
         <br/>
         <h4>Normalizer.js</h4>
         <br/>
-        <p>Earlier we mentioned that the runner.js file in our Node app stores session metrics from every virtual user action. We're storing these metrics by temporarily saving them to the local filesystems of the Fargate instances.</p>
+        <p>Earlier we mentioned that the <code>runner.js</code> file in our Node app stores session metrics from every virtual user action. We're storing these metrics by temporarily saving them to the local filesystems of the Fargate instances.</p>
         <br/>
         <figure>
           <img src="assets/images/5-architecture/slide52.svg">
           <figcaption>Fig. 5.6: Monsoon’s Normalizer.js script transforms metrics and moves them to an S3 bucket</figcaption>
         </figure>
         <br/>
-        <p>Alongside our load generation scripts, the Node app also runs a file called Normalizer.js. Normalizer.js polls the Fargate instance's local filesystem for new session metric data every 15 seconds. The Normalizer.js code applies transformations to any data it finds, then moves the transformed data to an S3 bucket for more permanent storage. This normalization step is necessary because the aggregation step that follows requires uniform timestamps.​</p>
-        <p>So the core logic of Normalizer.js groups the session metric data by time window. And a happy side effect of our normalization process is that we preserve statistical significance while minimizing data size.​</p>
+        <p>Alongside our load generation scripts, the Node app also runs a file called <code>Normalizer.js</code>. <code>Normalizer.js</code> polls the Fargate instance's local filesystem for new session metric data every 15 seconds. The <code>Normalizer.js</code> code applies transformations to any data it finds, then moves the transformed data to an S3 bucket for more permanent storage. This normalization step is necessary because the aggregation step that follows requires uniform timestamps.​</p>
+        <p>So the core logic of <code>Normalizer.js</code> groups the session metric data by time window. And a happy side effect of our normalization process is that we preserve statistical significance while minimizing data size.​</p>
         <br/>
         <h4>S3 Bucket</h4>
         <br/>
