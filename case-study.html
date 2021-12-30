@@ -904,7 +904,7 @@
         <br />
         <figure>
           <img src="assets/images/7-challenges/waiting_time.gif" class="case-study-image-large">
-          <figcaption>Fig 7.2: A waiting time ensures all virtual users hit the website at once.</figcaption>
+          <figcaption>Fig 7.2: A waiting time ensures all virtual users hit the website at once</figcaption>
         </figure>
         <br />
         <p>
@@ -929,7 +929,7 @@
         <br />
         <figure>
           <img src="assets/images/7-challenges/polling.gif" class="case-study-image-full">
-          <figcaption>Fig 7.3: Polling lets data keep moving through our pipeline.</figcaption>
+          <figcaption>Fig 7.3: Polling lets data keep moving through our pipeline</figcaption>
         </figure>
         <br />
         <h4>Moving Data to Timestream</h4>
@@ -945,7 +945,7 @@
         <br />
         <figure>
           <img src="assets/images/7-challenges/timestream.gif" class="case-study-image-full">
-          <figcaption>Fig 7.4: The Metronome Lambda ensures we move data from S3 to Timestream in a timely fashion.</figcaption>
+          <figcaption>Fig 7.4: The Metronome Lambda ensures we move data from S3 to Timestream in a timely fashion</figcaption>
         </figure>
         <br/>
         <p>
@@ -970,7 +970,7 @@
         <br/>
         <ol>
           <li><p>
-            Every minute, the Metronome Lambda retrieves a file called timestamps.json from the S3 bucket. This file contains a collection of pre-generated normalized timestamps.
+            Every minute, the Metronome Lambda retrieves a file called <code>timestamps.json</code> from the S3 bucket. This file contains a collection of pre-generated normalized timestamps.
           </p></li>
           <li><p>
             Then the Metronome Lambda goes over this array of timestamps, filtering out all the timestamps that have “expired”. A timestamp is considered expired if more than 3 minutes have passed since the timestamp was created.
@@ -982,14 +982,14 @@
           </li>
           <li>
             <p>
-              Finally, the Metronome Lambda returns the modified timestamps.json file to the S3 bucket. This process will be repeated until there are no more timestamps left in the timestamp.json file.
+              Finally, the Metronome Lambda returns the modified <code>timestamps.json</code> file to the S3 bucket. This process will be repeated until there are no more timestamps left in the <code>timestamp.json</code> file.
             </p>
           </li>
         </ol>
         <br/>
         <figure>
           <img src="assets/images/7-challenges/metronome lambda.gif" class="case-study-image-full">
-          <figcaption>Fig 7.5: The Metronome Lambda in action.</figcaption>
+          <figcaption>Fig 7.5: The Metronome Lambda in action</figcaption>
         </figure>
         <p>
           After solving this third timing issue, we had a working data pipeline capable of moving raw test ​
@@ -1035,7 +1035,7 @@
           <li>
             <a
               href="https://addyosmani.com/blog/puppeteer-recipes/"
-              class="references">Web Performance Recipes for Puppeteer by Addy Osmani
+              class="references">Web Performance Recipes With Puppeteer by Addy Osmani
             </a>
           </li>
           <li>
