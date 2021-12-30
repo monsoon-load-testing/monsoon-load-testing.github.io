@@ -677,7 +677,7 @@
         <br/>
         <p>AWS Lambda is a serverless, event-driven compute service. It's similar to Fargate. But while Fargate runs entire apps in a serverless environment, Lambda runs individual serverless functions.​</p>
         <p>
-          High level, every one minute, our Aggregating Lambda function polls the S3 bucket to determine if any new data has arrived. For each new timestamp, the lambda aggregates all the metrics in the JSON files with that timestamp, creating a single time series data point. Then we POST that data point to the time series database.
+          High level, every one minute, our Aggregating Lambda function polls the S3 bucket to determine if any new data has arrived. For each new timestamp, the lambda aggregates all the metrics in the JSON files with that timestamp, creating a single time series data point. Then we <code>POST</code> that data point to the time series database.
         </p>
         <figure>
           <img src="assets/images/5-architecture/aggregation_process.gif" class="case-study-image">
@@ -685,7 +685,7 @@
         </figure>
         <br/>
         <p>
-          But let’s clarify this high-level summary a bit. A given timestamp is ready to be processed 3 minutes after its creation. Processing begins by spinning up an instance of the Aggregating Lambda. That lambda grabs all JSON files from the S3 bucket whose timestamp matches the given timestamp and aggregates all those metrics into a single time series data point. The lambda then POSTs that data point to the time series database.
+          But let’s clarify this high-level summary a bit. A given timestamp is ready to be processed 3 minutes after its creation. Processing begins by spinning up an instance of the Aggregating Lambda. That lambda grabs all JSON files from the S3 bucket whose timestamp matches the given timestamp and aggregates all those metrics into a single time series data point. The lambda then <code>POST</code>s that data point to the time series database.
         </p>
         <br/>
         <p>
