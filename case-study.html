@@ -151,30 +151,17 @@
         </p>
         <br />
         <p>
-          But before we discuss these load tests, it’s important to note that the Boost website is a single page application. 
+          But before we discuss these load tests, it’s important to note that the Boost website is a <strong>single page application</strong>. 
           This has important implications for load testing.
         </p>
         <br />
-        <h3>1.4 What is a Single Page Application?</h3>
-        <br />
         <p>A single page application is a web app comprised of just a single HTML page. Unlike a traditional website, after the initial page load, there are no page reloads. 
-          The content of the single page is just repeatedly updated on the fly using browser-side JavaScript.
+         Further dynamic updates to the page are handled via data-centric APIs, which rely on browser-side JavaScript for rendering. 
         </p>
         <br />
-        <figure>
-          <img src="assets/images/1-introduction/SPA_benefits.svg" class="case-study-image-large" alt="">
-          <figcaption>Fig 1.3: SPA Benefits</figcaption>
-        </figure>
-        <p>
-          SPAs have some significant advantages over more traditional websites:
-        </p>
-        <ul>
-          <li>They reduce strain on server resources.</li>
-          <li>They speed up development by decoupling the frontend code from the backend code.</li>
-          <li>They provide a much more dynamic, responsive experience for the end user since there are no full page reloads.          </li>
-        </ul>
-        <br />
-        <h3>1.5 Boost Health and Their Load Testing Journey</h3>
+        
+      
+        <h3>1.4 Boost Health and Their Load Testing Journey</h3>
         <br />
         <p>
           So let’s follow along with the Boost engineers as they load test their SPA.
