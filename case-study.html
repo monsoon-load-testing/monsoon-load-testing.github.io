@@ -435,7 +435,7 @@
         </figure>
         <br/>
         <p>
-          Monsoon glues together all the resources needed to create a near real time load testing platform, then deploys it directly to Boost's AWS account. 
+          Monsoon glues together all the resources needed to create a near real time load testing platform, then deploys it directly to Boost's AWS account. (Real time refers to something the end user would perceive as instantaneous.)
         </p>
         <br/>
         <p>
@@ -519,7 +519,7 @@
         <br />
         <h4>Why Near Real Time?</h4>
         <br/>
-        <p>Load tests can be really long. It's not uncommon to run a test for hours, days or even weeks. Because of this, Monsoon can handle tests of arbitrary length – the limiting factor is only the user's AWS budget.​</p>
+        <p>Load tests can be really long. It's not uncommon to run a test for hours or days. Because of this, Monsoon can handle tests of arbitrary length – the limiting factor is only the user's AWS budget.​</p>
         <p>But we don't want our users to have to wait until a test completes before they see results – we'd like them to see results as soon as possible.​</p>
         <p>This means that Monsoon needs to extract, transform and load data into the database on a regular basis so it can be queried and displayed on the locally-hosted dashboard.​</p>
         <br/>
@@ -593,7 +593,7 @@
           <figcaption>Fig. 5.4: Monsoon’s transformation architecture</figcaption>
         </figure>
         <br/>
-        <p>To answer this, let's take a closer look at our Transformation architecture. High-level, the Transformation architecture takes the session metric data stored on each Fargate instance, transforms it into a time series data format, then loads it into a time series database.​</p>
+        <p>To answer this, let's take a closer look at our Transformation architecture. At a high-level, the Transformation architecture takes the session metric data stored on each Fargate instance, transforms it into a time series data format, then loads it into a time series database.​</p>
         <p>A key piece of the Transformation component is our normalization logic. Before we dive into the details, let's clarify our definition of "normalization" since it can be a slippery term in the data science world.</p>
         <p><strong>What is “normalization” exactly?</strong></p>
         <p>We consider it a pre-processing step that facilitates data aggregation. When we normalize raw data, we're taking multiple data points with different raw timestamps and combining them into a single data point with one normalized timestamp. If you think of calculating a moving average, that's a good mental model.​</p>
@@ -663,7 +663,7 @@
         <br/>
         <p>AWS Lambda is a serverless, event-driven compute service. It's similar to Fargate. But while Fargate runs entire apps in a serverless environment, Lambda runs individual serverless functions.​</p>
         <p>
-          High level, every one minute, our Aggregating Lambda function polls the S3 bucket to determine if any new data has arrived. For each new timestamp, the lambda aggregates all the metrics in the JSON files with that timestamp, creating a single time series data point. Then we <code>POST</code> that data point to the time series database.
+          At a high level, every one minute, our Aggregating Lambda function polls the S3 bucket to determine if any new data has arrived. For each new timestamp, the lambda aggregates all the metrics in the JSON files with that timestamp, creating a single time series data point. Then we <code>POST</code> that data point to the time series database.
         </p>
         <figure>
           <img src="assets/images/5-architecture/aggregation_process.gif" class="case-study-image">
@@ -857,12 +857,9 @@
         <br />
         <p>
           Examining existing load testing tools, we found that all of them focus on response time as ​
-          their core metric. At first glance, this seems reasonable, but digging deeper, we found ​
-          "response time" to be a very fuzzy term. Maybe it’s the elapsed time between when a ​
+          their core metric. But what is "response time" exactly? Maybe it’s the elapsed time between when a ​
           client issues a request and when that client receives the first byte of the response. Or maybe ​
-          we keep the timer going until the DOM content is fully loaded. We even contacted customer ​
-          support at Flood to get details about how they calculate response time, and we still weren’t ​
-          able to get complete clarity.​
+          we keep the timer going until the DOM content is fully loaded. 
         </p>
         <br />
         <figure>
