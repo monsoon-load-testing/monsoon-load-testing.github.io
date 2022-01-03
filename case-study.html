@@ -180,7 +180,7 @@
           <figcaption>Fig 1.4: Protocol-based load testing</figcaption>
         </figure>
         <p>
-          JMeter is categorized as a protocol-based load testing tool. Protocol-based load tests are the original type of load test. 
+          JMeter is categorized as a <strong>protocol-based load testing</strong> tool. Protocol-based load tests are the original type of load test. 
           They involve traffic simulation at the HTTP protocol layer. 
           For example, if loading a webpage triggers HTTP requests for 75 subresources, with protocol-based testing, the developers will need to write code to request the original page AND all 75 of those subresources.
         </p>
@@ -199,7 +199,7 @@
           <figcaption>Fig 1.5: Bye bye weekend</figcaption>
         </figure>
         <p>
-          To simulate this workflow, the Boost engineers need to program JMeter to send 125 different HTTP requests in the correct order. This is clearly a great deal of work for the team. On top of this, JMeter is a complex tool and the learning curve is steep. The team settles in for many painful days of work ahead. 
+          To simulate this workflow, the Boost engineers need to program JMeter to send 125 different HTTP requests in the correct order. This is clearly a great deal of work for the team. On top of this, JMeter is a complex tool and the learning curve is steep. 
         </p>
         <br />
         <figure>
@@ -227,7 +227,7 @@
         <br />
         <p>
           An even more fundamental difference between protocol-based load testing and browser-based load testing tools like Selenium is this: 
-          Is the core unit we care about, is that the individual network request? Or is it an action the end user takes (which could actually result in 100 or more network requests)?
+          Is the core unit under test the network request? Or is it an action the end user takes (which could actually result in 100 or more network requests)?
         </p>
         <br />
         <p>
@@ -236,12 +236,11 @@
         </p>
         <br />
         <p>
-          Furthermore, thinking in terms of end user actions rather than lower-level network requests means browser-based load testing is significantly less complex than its protocol-based counterpart. 
-          When planning how to test the Boost site, the engineers can think at a higher level of abstraction, which reduces bugs, makes for a better developer experience and saves significant amounts of developer time.
+          Furthermore, thinking in terms of end user actions rather than lower-level network requests means the Boost engineers can think at a higher level of abstraction, which reduces bugs, makes for a better developer experience and saves significant amounts of developer time.
         </p>
         <br />
         <p>
-          Returning to Selenium, it's a suite of browser-based test automation tools. It was never actually designed for load testing, but that's how Selenium came to be used by many developers. With Selenium, the Boost engineers don't need to worry about HTTP requests anymore. All they need to do is script their 3 end user actions.​
+          Returning to Selenium - it's a suite of browser-based test automation tools. It was never actually designed for load testing, but that's how Selenium came to be used by many developers. With Selenium, the Boost engineers don't need to worry about HTTP requests anymore. All they need to do is script their 3 end user actions ("Go to the Boost Health Main Page", "View the Brain Boost Product Details", "Add Brain Boost to the cart").​
         </p>
         <br />
         <figure>
